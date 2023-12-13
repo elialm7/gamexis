@@ -30,7 +30,7 @@ public class GameXis implements ApplicationListener {
 		batch.draw(texture, 100+100*(float)Math.cos(elapsed), 100+25*(float)Math.sin(elapsed));
 		batch.end();
 	}
-
+//Hola
 	@Override
 	public void pause () {
 	}

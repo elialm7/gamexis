@@ -77,8 +77,4 @@ public class Servidor extends Thread {
             socket.close();
         }
     }
-
-    public void detenerServidor() {
-        enEjecucion.set(false);
-    }
 }

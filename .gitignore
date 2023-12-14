@@ -1,2 +1,6 @@
 .idea
 target
+cliente/target
+servidor/target
+desktop/target
+core/target

@@ -5,7 +5,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
 public class Cliente {
-    private String serverIPAddress;
     private static final String MULTICAST_ADDRESS = "224.0.0.1";
     private static final int PORT = 8888;
 
@@ -14,7 +13,6 @@ public class Cliente {
 
 
     public Cliente(String serverIPAddress) {
-        this.serverIPAddress = serverIPAddress;
 
         try {
             // Configurar el canal del cliente

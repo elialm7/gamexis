@@ -4,18 +4,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
-
 import static org.junit.Assert.*;
 
 public class UDPTest {
 
     private Cliente client;
-    private Servidor servidor;
+
     @Before
     public void setUp() throws InterruptedException {
         // Iniciar el servidor antes de cada prueba
-        servidor = new Servidor();
+        Servidor servidor = new Servidor();
         servidor.start();
         Thread.sleep(1000);
         // Iniciar el cliente con la dirección del servidor

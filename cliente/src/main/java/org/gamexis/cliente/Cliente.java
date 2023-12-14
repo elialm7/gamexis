@@ -1,13 +1,9 @@
 package org.gamexis.cliente;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
-import java.net.MulticastSocket;
-import java.net.NetworkInterface;
+import java.net.*;
 
 public class Cliente {
-    private final String MULTICAST_GROUP = "224.0.0.1";
     private final int PORT;
     private final MulticastSocket socket;
     private final InetAddress group;
@@ -17,13 +13,14 @@ public class Cliente {
         this.PORT = 5000;
 
         socket = new MulticastSocket(null);
+        String MULTICAST_GROUP = "224.0.0.1";
         group = InetAddress.getByName(MULTICAST_GROUP);
 
         // Reemplaza 'joinGroup(group)' por el siguiente bloque:
         socket.joinGroup(new java.net.InetSocketAddress(group, PORT), NetworkInterface.getByInetAddress(InetAddress.getLocalHost()));
     }
 
-    public void enviarMensaje(String message) throws Exception {
+    public void enviarMensaje(String message) throws IOException {
         if (cerrado) {
             throw new IllegalStateException("El cliente está cerrado. No se pueden enviar mensajes.");
         }
@@ -33,7 +30,7 @@ public class Cliente {
         socket.send(sendPacket);
     }
 
-    public String recibirMensaje() throws Exception {
+    public String recibirMensaje() throws IOException {
         if (cerrado) {
             throw new IllegalStateException("El cliente está cerrado. No se pueden recibir mensajes.");
         }
@@ -45,15 +42,11 @@ public class Cliente {
         return new String(receivePacket.getData(), 0, receivePacket.getLength());
     }
 
-    public void close() {
-        try {
-            if (!cerrado) {
-                socket.leaveGroup(new java.net.InetSocketAddress(group, PORT), NetworkInterface.getByInetAddress(InetAddress.getLocalHost()));
-                socket.close();
-                cerrado = true;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void close() throws IOException {
+        if (!cerrado) {
+            socket.leaveGroup(new java.net.InetSocketAddress(group, PORT), NetworkInterface.getByInetAddress(InetAddress.getLocalHost()));
+            socket.close();
+            cerrado = true;
         }
     }
 }

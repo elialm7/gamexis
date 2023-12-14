@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.NetworkInterface;
 
 public class Cliente {
     private final String MULTICAST_GROUP = "224.0.0.1";
@@ -15,9 +16,11 @@ public class Cliente {
     public Cliente() throws IOException {
         this.PORT = 5000;
 
-        socket = new MulticastSocket(PORT);
+        socket = new MulticastSocket(null);
         group = InetAddress.getByName(MULTICAST_GROUP);
-        socket.joinGroup(group);
+
+        // Reemplaza 'joinGroup(group)' por el siguiente bloque:
+        socket.joinGroup(new java.net.InetSocketAddress(group, PORT), NetworkInterface.getByInetAddress(InetAddress.getLocalHost()));
     }
 
     public void enviarMensaje(String message) throws Exception {
@@ -45,7 +48,7 @@ public class Cliente {
     public void close() {
         try {
             if (!cerrado) {
-                socket.leaveGroup(group);
+                socket.leaveGroup(new java.net.InetSocketAddress(group, PORT), NetworkInterface.getByInetAddress(InetAddress.getLocalHost()));
                 socket.close();
                 cerrado = true;
             }

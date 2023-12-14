@@ -152,6 +152,7 @@
 		<module>cliente</module>
 		<module>desktop</module>
 		<module>servidor</module>
+		<module>StarfishTest</module>
 
 	</modules>
 </project>

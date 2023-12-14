@@ -43,6 +43,7 @@ public class Cliente {
     public String recibirMensaje() {
         try {
             ByteBuffer buffer = ByteBuffer.allocate(1024);
+            //Mantengo el serverAddress para futuros usos, y también por el channel.receive() que sin ese no funciona.
             SocketAddress serverAddress = channel.receive(buffer);
             buffer.flip();
             String msg = new String(buffer.array(), 0, buffer.limit());

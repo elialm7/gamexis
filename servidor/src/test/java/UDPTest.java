@@ -4,6 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 public class UDPTest {
@@ -11,7 +13,7 @@ public class UDPTest {
     private Cliente client;
 
     @Before
-    public void setUp() throws InterruptedException {
+    public void setUp() throws InterruptedException, IOException {
         // Iniciar el servidor antes de cada prueba
         Servidor servidor = new Servidor();
         servidor.start();

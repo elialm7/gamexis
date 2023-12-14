@@ -10,25 +10,36 @@ import static org.junit.Assert.*;
 
 public class UDPTest {
 
-    Cliente client;
-
+    private Cliente client;
+    private Servidor servidor;
     @Before
-    public void configuracion() throws IOException {
-        new Servidor().start();
-        client = new Cliente();
+    public void setUp() throws InterruptedException {
+        // Iniciar el servidor antes de cada prueba
+        servidor = new Servidor();
+        servidor.start();
+        Thread.sleep(1000);
+        // Iniciar el cliente con la dirección del servidor
+        client = new Cliente("26.204.82.158");
     }
 
     @Test
-    public void cuandoSeEnviaElPaqueteRetornaIgual() throws Exception {
+    public void cuandoSeEnviaElPaqueteRetornaIgual() throws InterruptedException {
+        // Enviar mensaje al servidor
         client.enviarMensaje("puta");
+        // Verificar si el mensaje recibido es igual al enviado
         assertEquals("puta", client.recibirMensaje());
+        Thread.sleep(1000);
+        // Enviar otro mensaje al servidor
         client.enviarMensaje("funciona");
+        // Verificar que el nuevo mensaje recibido no sea igual al anterior
         assertNotEquals("puta", client.recibirMensaje());
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
+        // Enviar mensaje de cierre al servidor y cerrar el cliente
+        System.out.println("Cerrar");
         client.enviarMensaje("cerrar");
-        client.close();
+        client.salir();
     }
 }

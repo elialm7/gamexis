@@ -149,5 +149,9 @@
 
 	<modules>
 		<module>core</module>
+		<module>cliente</module>
+		<module>desktop</module>
+		<module>servidor</module>
+
 	</modules>
 </project>

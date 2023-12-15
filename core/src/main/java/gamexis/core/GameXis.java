@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class GameXis implements ApplicationListener {
 
-	
+	//Futuramente Core, tendra que importarse consigo a Servidor y Cliente
 	Texture texture;
 	SpriteBatch batch;
 

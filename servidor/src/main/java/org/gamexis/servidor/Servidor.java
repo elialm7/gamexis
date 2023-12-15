@@ -1,80 +1,49 @@
 package org.gamexis.servidor;
 
-import java.io.IOException;
 import java.net.*;
-import java.util.Enumeration;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.nio.ByteBuffer;
+import java.nio.channels.DatagramChannel;
+import java.nio.channels.MembershipKey;
 
 public class Servidor extends Thread {
-    private final int PUERTO;
-    private final String GRUPO_MULTICAST;
-    private final MulticastSocket socket;
-    private final AtomicBoolean enEjecucion;
-    private NetworkInterface interfaz = null;
-
-
-    private final byte[] buf = new byte[1024];
-
-    public Servidor() throws IOException {
-        this.PUERTO = 5000;
-        this.GRUPO_MULTICAST = "224.0.0.1"; // Puedes ajustar esto según tus necesidades
-
-        socket = new MulticastSocket(PUERTO);
-
-        // Obtener la interfaz de red correcta
-
-        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-
-        while (interfaces.hasMoreElements()) {
-            NetworkInterface currentInterface = interfaces.nextElement();
-
-            if (!currentInterface.isLoopback() && !currentInterface.isVirtual() && currentInterface.supportsMulticast() && currentInterface.isUp()) {
-                interfaz = currentInterface;
-                break;
-            }
-        }
-
-        if (interfaz != null) {
-            socket.joinGroup(new java.net.InetSocketAddress(InetAddress.getByName(GRUPO_MULTICAST), PUERTO), interfaz);
-        } else {
-            throw new IOException("No se encontró una interfaz de red válida para unirse al grupo multicast.");
-        }
-
-        enEjecucion = new AtomicBoolean(true);
-    }
+    private static final String MULTICAST_ADDRESS = "224.0.0.1";
+    private static final int PORT = 8888;
 
     public void run() {
-        while (enEjecucion.get()) {
-            DatagramPacket paqueteRecibido = new DatagramPacket(buf, buf.length);
-            try {
-                socket.receive(paqueteRecibido);
-
-                InetAddress direccionCliente = paqueteRecibido.getAddress();
-                int puertoCliente = paqueteRecibido.getPort();
-
-                String recibido = new String(paqueteRecibido.getData(), 0, paqueteRecibido.getLength());
-                System.out.println("Recibido del cliente (" + direccionCliente.getHostAddress() + ":" + puertoCliente + "): " + recibido);
-
-                // Puedes agregar lógica adicional según tus necesidades aquí
-                if (recibido.equals("cerrar")) {
-                    enEjecucion.set(false);
-                    continue;
-                }
-                socket.send(paqueteRecibido);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                // Manejar la excepción según tus necesidades
-            }
-        }
-
         try {
-            socket.leaveGroup(new InetSocketAddress(GRUPO_MULTICAST, PUERTO), interfaz);
-        } catch (IOException e) {
+            // Configurar el canal del servidor
+            DatagramChannel channel = DatagramChannel.open(StandardProtocolFamily.INET)
+                    .setOption(StandardSocketOptions.SO_REUSEADDR, true)
+                    .bind(new InetSocketAddress(PORT));
+
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            NetworkInterface networkInterface = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
+            System.out.println(InetAddress.getLocalHost());
+            MembershipKey membershipKey = channel.join(group, networkInterface);
+
+            System.out.println("Servidor Multicast UDP esperando mensajes...");
+
+            // Bucle principal del servidor
+            while (true) {
+                ByteBuffer buffer = ByteBuffer.allocate(1024);
+                SocketAddress clientAddress = channel.receive(buffer);
+
+                buffer.flip();
+                String message = new String(buffer.array(), 0, buffer.limit());
+
+                System.out.println("Mensaje recibido de " + clientAddress + ": " + message);
+
+                if (message.equals("cerrar")) {
+                    System.out.println("Cerrando el servidor...");
+                    membershipKey.drop(); // Dejar el grupo multicast antes de cerrar el canal
+                    channel.close();
+                    break;
+                }
+                ByteBuffer enviarBuffer = ByteBuffer.wrap(message.getBytes());
+                channel.send(enviarBuffer,clientAddress);
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-            // Manejar la excepción según tus necesidades
-        } finally {
-            socket.close();
         }
     }
 }

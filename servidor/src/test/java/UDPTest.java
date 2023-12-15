@@ -8,6 +8,9 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
+
+
+// Para testear, importar el modulo Cliente al Modulo Servidor
 public class UDPTest {
 
     private Cliente client;

@@ -12,7 +12,7 @@ public class Comunicacion {
     }
     @Test
     public void comunicarAlServidor() {
-        String mensaje = "el mensaje";
+        String mensaje = "cerrar";
         cliente.enviarMensaje(mensaje);
         assertEquals(mensaje,cliente.recibirMensaje());
     }

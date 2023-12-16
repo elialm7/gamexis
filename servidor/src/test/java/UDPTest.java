@@ -39,7 +39,7 @@ public class UDPTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
         // Enviar mensaje de cierre al servidor y cerrar el cliente
         System.out.println("Cerrar");
         client.enviarMensaje("cerrar");

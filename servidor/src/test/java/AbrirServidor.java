@@ -3,11 +3,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+
 public class AbrirServidor {
     private Servidor servidor;
 
     @Before
-    public void setUp(){
+    public void setUp() throws IOException {
         servidor = new Servidor();
 
     }
@@ -19,4 +21,5 @@ public class AbrirServidor {
     public void cerrar() throws InterruptedException {
         servidor.join();
     }
+
 }

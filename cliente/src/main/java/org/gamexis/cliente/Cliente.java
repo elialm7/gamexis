@@ -1,32 +1,54 @@
 package org.gamexis.cliente;
 
+import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
 public class Cliente {
-    private static final String MULTICAST_ADDRESS = "224.0.0.1";
-    private static final int PORT = 8888;
+    private  String MULTICAST_ADDRESS = "224.0.0.1";
+    private String IP_SERVIDOR;
+    private  final int PORT = 8888;
 
     private DatagramChannel channel;
 
 
 
     public Cliente(String serverIPAddress) {
-
+        this.IP_SERVIDOR = serverIPAddress;
         try {
             // Configurar el canal del cliente
             channel = DatagramChannel.open(StandardProtocolFamily.INET)
                     .setOption(StandardSocketOptions.SO_REUSEADDR, true)
                     .bind(new InetSocketAddress(0)) // 0 indica que se elija un puerto aleatorio
-                    .setOption(StandardSocketOptions.IP_MULTICAST_IF, NetworkInterface.getByInetAddress(InetAddress.getByName(serverIPAddress)));
+                    .setOption(StandardSocketOptions.IP_MULTICAST_IF, NetworkInterface.getByInetAddress(InetAddress.getByName(IP_SERVIDOR)));
 
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-            channel.join(group, NetworkInterface.getByInetAddress(InetAddress.getByName(serverIPAddress)));
+            channel.join(group, NetworkInterface.getByInetAddress(InetAddress.getByName(IP_SERVIDOR)));
 
            // System.out.println("Cliente Multicast UDP conectado al servidor en " + serverIPAddress);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void cambiarDireccionMultiCast(String nuevaDireccionMultiCast){
+        this.MULTICAST_ADDRESS = nuevaDireccionMultiCast;
+        salir();
+        try{
+            channel = DatagramChannel.open(StandardProtocolFamily.INET)
+                    .setOption(StandardSocketOptions.SO_REUSEADDR, true)
+                    .bind(new InetSocketAddress(0)) // 0 indica que se elija un puerto aleatorio
+                    .setOption(StandardSocketOptions.IP_MULTICAST_IF, NetworkInterface.getByInetAddress(InetAddress.getByName(nuevaDireccionMultiCast)));
+
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            channel.join(group, NetworkInterface.getByInetAddress(InetAddress.getByName(MULTICAST_ADDRESS)));
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -58,8 +80,8 @@ public class Cliente {
     public void salir() {
         try {
             channel.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

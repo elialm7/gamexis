@@ -1,4 +1,4 @@
-package org.gamexis.servidor.protocolos;
+package org.gamexis.servidor.protocolo;
 
 import java.io.IOException;
 import java.net.*;
@@ -14,15 +14,14 @@ public class ServidorUDP implements Runnable {
 
 
     public ServidorUDP(int puerto, String direccionMulticast ) throws IOException {
-        channel = DatagramChannel.open(StandardProtocolFamily.INET)
-                .setOption(StandardSocketOptions.SO_REUSEADDR, true)
-                .bind(new InetSocketAddress(puerto));
-       // channel.configureBlocking(false);
+        channel = DatagramChannel.open();
+        channel.bind(new InetSocketAddress(puerto));
+
         InetAddress group = InetAddress.getByName(direccionMulticast);
         NetworkInterface networkInterface = NetworkInterface.getByInetAddress(InetAddress.getLocalHost());
-        System.out.println(InetAddress.getLocalHost());
-        membershipKey = channel.join(group, networkInterface);
-        System.out.println("Servidor Multicast UDP esperando mensajes en la dirección "+direccionMulticast+"...");
+
+        this.membershipKey = channel.join(group, networkInterface);
+        System.out.println("Servidor Multicast UDP esperando mensajes IP "+InetAddress.getLocalHost() +" y en la dirección "+direccionMulticast+"...");
     }
 
     public void cerrar() throws IOException {

@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 
 public class Cliente {
-    private  String MULTICAST_ADDRESS = "224.0.0.1";
+    private  String MULTICAST_ADDRESS = "224.0.1.1";
     private String IP_SERVIDOR;
     private  final int PORT = 8888;
 
@@ -18,15 +18,22 @@ public class Cliente {
         this.IP_SERVIDOR = serverIPAddress;
         try {
             // Configurar el canal del cliente
-            channel = DatagramChannel.open(StandardProtocolFamily.INET)
-                    .setOption(StandardSocketOptions.SO_REUSEADDR, true)
-                    .bind(new InetSocketAddress(0)) // 0 indica que se elija un puerto aleatorio
-                    .setOption(StandardSocketOptions.IP_MULTICAST_IF, NetworkInterface.getByInetAddress(InetAddress.getByName(IP_SERVIDOR)));
+            channel = DatagramChannel.open();
+
+            //Direccion del servidor
+            InetAddress hostServidor = InetAddress.getByName(IP_SERVIDOR);
+
+            // Configurar la interfaz de red local
+            NetworkInterface networkInterface = NetworkInterface.getByInetAddress(hostServidor);
+            channel.setOption(StandardSocketOptions.IP_MULTICAST_IF, networkInterface);
 
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-            channel.join(group, NetworkInterface.getByInetAddress(InetAddress.getByName(IP_SERVIDOR)));
 
-           // System.out.println("Cliente Multicast UDP conectado al servidor en " + serverIPAddress);
+            // Unirse al grupo de multidifusión en la interfaz especificada
+            channel.join(group, networkInterface);
+
+            System.out.println("Cliente Multicast UDP unido al grupo " + MULTICAST_ADDRESS + " en la interfaz " + hostServidor.getHostName()+"/"+ hostServidor.getHostAddress()+ "...");
+
         } catch (Exception e) {
             e.printStackTrace();
         }

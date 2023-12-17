@@ -39,26 +39,6 @@ public class Cliente {
         }
     }
 
-    public void cambiarDireccionMultiCast(String nuevaDireccionMultiCast){
-        this.MULTICAST_ADDRESS = nuevaDireccionMultiCast;
-        salir();
-        try{
-            channel = DatagramChannel.open(StandardProtocolFamily.INET)
-                    .setOption(StandardSocketOptions.SO_REUSEADDR, true)
-                    .bind(new InetSocketAddress(0)) // 0 indica que se elija un puerto aleatorio
-                    .setOption(StandardSocketOptions.IP_MULTICAST_IF, NetworkInterface.getByInetAddress(InetAddress.getByName(nuevaDireccionMultiCast)));
-
-            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-            channel.join(group, NetworkInterface.getByInetAddress(InetAddress.getByName(MULTICAST_ADDRESS)));
-        } catch (SocketException e) {
-            throw new RuntimeException(e);
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void enviarMensaje(String mensaje) {
         try {
             ByteBuffer buffer = ByteBuffer.wrap(mensaje.getBytes());

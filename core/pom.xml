@@ -17,6 +17,11 @@
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.gamexis</groupId>
+			<artifactId>ExtendedFramework</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>

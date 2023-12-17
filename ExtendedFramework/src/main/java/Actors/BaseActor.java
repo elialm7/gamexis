@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -23,7 +23,13 @@ public class BaseActor extends Actor {
     private boolean animationPaused;
 
     private Vector2 velocityVec;
-    public BaseActor(float x, float y, Stage s){
+
+    private Vector2 accelerationVec;
+    private float acceleration;
+
+    private float maxSpeed;
+    private float deceleration;
+    public BaseActor(float x, float y, Stage s) {
         super();
         setPosition(x, y);
         s.addActor(this);
@@ -32,11 +38,40 @@ public class BaseActor extends Actor {
         this.elapsedtime = 0;
         this.animationPaused = false;
 
-        this.velocityVec = new Vector2(0,0);
+        this.velocityVec = new Vector2(0, 0);
+        this.accelerationVec = new Vector2(0, 0);
+        this.acceleration = 0;
 
+        this.maxSpeed = 1000;
+        this.deceleration = 0;
 
     }
-
+    public void applyPhysics(float dt){
+        velocityVec.add(accelerationVec.x*dt, accelerationVec.y*dt);
+        float speed = getSpeed();
+        if(accelerationVec.len() == 0){
+            speed -= deceleration*dt;
+        }
+        speed = MathUtils.clamp(speed, 0,maxSpeed);
+        setSpeed(speed);
+        moveBy(velocityVec.x*dt, velocityVec.y*dt);
+        accelerationVec.set(0,0);
+    }
+    public void setMaxSpeed(float ms){
+        this.maxSpeed = ms;
+    }
+    public void setDeceleration(float dec){
+        this.deceleration = dec;
+    }
+    public void setAcceleration(float acc){
+        this.acceleration = acc;
+    }
+    public void accelerateAtAngle(float angle){
+        this.accelerationVec.add(new Vector2(acceleration, 0).setAngle(angle));
+    }
+    public void accelerateForward(){
+        this.accelerateAtAngle(getRotation());
+    }
     public void setSpeed(float speed){
         if(velocityVec.len() == 0){
             velocityVec.set(speed, 0);
@@ -48,25 +83,18 @@ public class BaseActor extends Actor {
             velocityVec.nor().scl(speed);
         }
     }
-
     public float getSpeed(){
         return this.velocityVec.len();
     }
-
     public float getMotionAngle(){
         return this.velocityVec.angle();
     }
-
     public void setMotionAngle(float angle){
         this.velocityVec.setAngle(angle);
     }
-
     public boolean isMoving(){
         return(getSpeed()>0);
     }
-
-
-
     public void setAnimation(Animation anim){
         this.animation = anim;
         TextureRegion tr = animation.getKeyFrame(0);
@@ -128,23 +156,14 @@ public class BaseActor extends Actor {
         return anim;
 
     }
-
-
     public boolean isAnimationFinished(){
         return this.animation.isAnimationFinished(elapsedtime);
     }
-
     public Animation loadTexture(String filename){
         String[] fileNames = new String[1];
         fileNames[0] = filename;
         return loadAnimationFromFiles(fileNames, 1, true);
     }
-
-
-
-
-
-
 
     public void act(float dt){
         super.act(dt);
@@ -152,8 +171,6 @@ public class BaseActor extends Actor {
             elapsedtime += dt;
         }
     }
-
-
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);

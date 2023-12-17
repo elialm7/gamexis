@@ -11,6 +11,6 @@ public class GameXisDesktop {
 		new LwjglApplication(new GameXis(), config);*/
 
 		Game myGame = new StarFishCollector();
-		new LwjglApplication(myGame, "Starfish Collector",800,600);
+		new LwjglApplication(myGame, "Starfish Collector v1.1 ",800,600);
 	}
 }

@@ -1,9 +1,10 @@
-package starfishgame.Actors;
+package starfishgame;
 
+import Actors.BaseActor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
-public class Turtle extends  BaseActor{
+public class Turtle extends BaseActor {
 
     public Turtle(){
         super();

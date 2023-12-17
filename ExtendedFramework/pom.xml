@@ -8,8 +8,6 @@
         <artifactId>gamexis</artifactId>
         <version>1.0.0</version>
     </parent>
-
-    <groupId>com.gamexis</groupId>
     <artifactId>ExtendedFramework</artifactId>
 
     <properties>

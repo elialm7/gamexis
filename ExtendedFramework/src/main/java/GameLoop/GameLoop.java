@@ -1,4 +1,4 @@
-package starfishgame.GameLoop;
+package GameLoop;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;

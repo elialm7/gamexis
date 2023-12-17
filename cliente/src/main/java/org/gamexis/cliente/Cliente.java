@@ -4,71 +4,67 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
+import java.nio.charset.StandardCharsets;
 
-public class Cliente {
-    private  String MULTICAST_ADDRESS = "224.0.1.1";
-    private String IP_SERVIDOR;
-    private  final int PORT = 8888;
+public class Cliente implements Runnable {
+    private static final int BUFFER_SIZE = 256;
+    private static final String MULTICAST_GROUP = "234.0.1.1";
 
-    private DatagramChannel channel;
+    private final DatagramChannel channel;
+    private final InetSocketAddress serverSocketAddress;
+    private final ByteBuffer bufferEmisor;
+    private final ByteBuffer bufferReceptor;
 
-
-
-    public Cliente(String serverIPAddress) {
-        this.IP_SERVIDOR = serverIPAddress;
-        try {
-            // Configurar el canal del cliente
-            channel = DatagramChannel.open();
-
-            //Direccion del servidor
-            InetAddress hostServidor = InetAddress.getByName(IP_SERVIDOR);
-
-            // Configurar la interfaz de red local
-            NetworkInterface networkInterface = NetworkInterface.getByInetAddress(hostServidor);
-            channel.setOption(StandardSocketOptions.IP_MULTICAST_IF, networkInterface);
-
-            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-
-            // Unirse al grupo de multidifusión en la interfaz especificada
-            channel.join(group, networkInterface);
-
-            System.out.println("Cliente Multicast UDP unido al grupo " + MULTICAST_ADDRESS + " en la interfaz " + hostServidor.getHostName()+"/"+ hostServidor.getHostAddress()+ "...");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Cliente(String servidorDireccion) throws IOException {
+        channel = DatagramChannel.open();
+        channel.configureBlocking(false);
+        InetAddress serverAddress = InetAddress.getByName(servidorDireccion);
+        serverSocketAddress = new InetSocketAddress(serverAddress, 8888);
+        bufferEmisor = bufferReceptor = ByteBuffer.allocate(BUFFER_SIZE);
+        channel.join(InetAddress.getByName(MULTICAST_GROUP), NetworkInterface.getByInetAddress(InetAddress.getLocalHost()));
     }
 
-    public void enviarMensaje(String mensaje) {
-        try {
-            ByteBuffer buffer = ByteBuffer.wrap(mensaje.getBytes());
-            channel.send(buffer, new InetSocketAddress(MULTICAST_ADDRESS, PORT));
-            System.out.println("Mensaje enviado: " + mensaje);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void enviarMensaje(String mensaje) throws IOException {
+        bufferEmisor.clear();
+        bufferEmisor.put(mensaje.getBytes());
+        bufferEmisor.flip();
+        channel.send(bufferEmisor, serverSocketAddress);
     }
 
-    public String recibirMensaje() {
-        try {
-            ByteBuffer buffer = ByteBuffer.allocate(1024);
-            //Mantengo el serverAddress para futuros usos, y también por el channel.receive() que sin ese no funciona.
-            SocketAddress serverAddress = channel.receive(buffer);
-            buffer.flip();
-            String msg = new String(buffer.array(), 0, buffer.limit());
-            System.out.println("Recibido "+msg+" desde cliente");
-            return msg ;
-        } catch (Exception e) {
-            e.printStackTrace();
+    public String recibirMensaje() throws IOException {
+        bufferReceptor.clear();
+        SocketAddress senderAddress = channel.receive(bufferReceptor);
+
+        if (senderAddress != null) {
+            bufferReceptor.flip();
+            byte[] respuestaBytes = new byte[bufferReceptor.remaining()];
+            bufferReceptor.get(respuestaBytes);
+            return new String(respuestaBytes, StandardCharsets.UTF_8);
+        } else {
             return null;
         }
     }
 
-    public void salir() {
-        try {
-            channel.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public void salir() throws IOException {
+        channel.close();
+    }
+
+    @Override
+    public void run() {
+        int c = 0;
+        while (true) {
+            try {
+                String msg = this.recibirMensaje();
+                if(msg != null) {
+                    c++;
+                    System.out.println(msg + " ["+c+"]");
+                }
+                Thread.sleep(30);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

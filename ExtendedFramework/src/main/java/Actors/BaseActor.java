@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.compression.lzma.Base;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -51,6 +52,30 @@ public class BaseActor extends Actor {
         this.maxSpeed = 1000;
         this.deceleration = 0;
 
+    }
+
+
+    public static ArrayList<BaseActor> getList(Stage stage, String className){
+        ArrayList<BaseActor> list = new ArrayList<>();
+        Class theClass = null;
+        try{
+            theClass = Class.forName(className);
+        }catch (Exception error){
+            Gdx.app.error("Class Error", "No se pudo obtener la clase por reflexion", error);
+            error.printStackTrace();
+        }
+
+        for(Actor act: stage.getActors()){
+            if(theClass.isInstance(act)){
+                list.add((BaseActor) act);
+            }
+        }
+        return list;
+
+    }
+
+    public static int count(Stage stage, String className){
+        return getList(stage, className).size();
     }
 
     public Vector2 preventOverlap(BaseActor other){

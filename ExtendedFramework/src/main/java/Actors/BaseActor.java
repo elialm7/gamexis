@@ -1,20 +1,19 @@
 package Actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.compression.lzma.Base;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +35,8 @@ public class BaseActor extends Actor {
 
     private Polygon boundaryPolygon;
 
+    private static Rectangle worldBounds;
+
     public BaseActor(float x, float y, Stage s) {
         super();
         setPosition(x, y);
@@ -55,16 +56,44 @@ public class BaseActor extends Actor {
     }
 
 
-    public static ArrayList<BaseActor> getList(Stage stage, String className){
-        ArrayList<BaseActor> list = new ArrayList<>();
-        Class theClass = null;
-        try{
-            theClass = Class.forName(className);
-        }catch (Exception error){
-            Gdx.app.error("Class Error", "No se pudo obtener la clase por reflexion", error);
-            error.printStackTrace();
-        }
+    public void alignCamera(){
 
+        Camera cam = this.getStage().getCamera();
+        Viewport v = this.getStage().getViewport();
+        cam.position.set(this.getX()+this.getOriginX(), this.getY()+this.getOriginY(), 0);
+        cam.position.x = MathUtils.clamp(cam.position.x, cam.viewportWidth/2, worldBounds.width - cam.viewportWidth/2);
+        cam.position.y = MathUtils.clamp(cam.position.y,cam.viewportHeight/2, worldBounds.height - cam.viewportHeight/2);
+        cam.update();
+
+    }
+
+    public static void setWorldBounds(float width, float height){
+
+        worldBounds = new Rectangle(0,0, width, height);
+    }
+    public static void setWorldBounds(BaseActor ba){
+        setWorldBounds(ba.getWidth(), ba.getHeight());
+    }
+
+
+    public void boundToWorld(){
+        if(getX() < 0){
+            setX(0);
+        }
+        if(getX() + getWidth() > worldBounds.width){
+            setX(worldBounds.x-getWidth());
+        }
+        if(getY()<0){
+            setY(0);
+        }
+        if(getY() + getHeight() > worldBounds.height){
+            setY(worldBounds.y-getHeight());
+        }
+    }
+
+    public static ArrayList<BaseActor> getList(Stage stage, Class<?> clazz){
+        ArrayList<BaseActor> list = new ArrayList<>();
+        Class theClass = clazz;
         for(Actor act: stage.getActors()){
             if(theClass.isInstance(act)){
                 list.add((BaseActor) act);
@@ -74,8 +103,8 @@ public class BaseActor extends Actor {
 
     }
 
-    public static int count(Stage stage, String className){
-        return getList(stage, className).size();
+    public static int count(Stage stage, Class<?> clazz){
+        return getList(stage, clazz).size();
     }
 
     public Vector2 preventOverlap(BaseActor other){

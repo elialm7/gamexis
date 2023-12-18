@@ -18,12 +18,12 @@ public class Servidor extends Thread {
 
     public Servidor( ) throws IOException {
         //Uso esa dirección porque es la primera entre el rango de direcciones multicast
-        UDP_PRINCIPAL = new ServidorUDP(PUERTO_UDP,"224.0.1.1");
+        UDP_PRINCIPAL = new ServidorUDP(PUERTO_UDP,"234.0.1.1");
     }
 
     public void run() {
         servidoresUDP.submit(this.UDP_PRINCIPAL);
-        while(!UDP_PRINCIPAL.isCerrado());
+        while(!UDP_PRINCIPAL.estaCerrado());
         System.out.println("Cerrar");
     }
 

@@ -5,7 +5,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public class Turtle extends BaseActor {
+import java.io.Serializable;
+
+public class Turtle extends BaseActor implements Serializable {
+
+
+  private float VelocityModule;
+  private float VelocityAngle;
+
+  private float AccelerationModule;
+  private float AccelerationAngle;
+
+  private float Xposition;
+  private float Yposition;
+
+
 
 
 
@@ -44,9 +58,21 @@ public class Turtle extends BaseActor {
         if(getSpeed()>0){
             setRotation(getMotionAngle());
         }
-
+        updateState();
         boundToWorld();
         alignCamera();
 
+
+
     }
+
+    private void updateState(){
+        this.VelocityModule = getVelocityModule();
+        this.VelocityAngle = getVelocityAngle();
+        this.AccelerationModule = getAccelerationModule();
+        this.AccelerationAngle = getAccelerationAngle();
+        String velocity = "("+VelocityModule+", "+VelocityAngle+")";
+        Gdx.app.log("INFO:Velocitiy:", velocity);
+    }
+
 }

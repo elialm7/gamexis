@@ -19,7 +19,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.gamexis</groupId>
-			<artifactId>ExtendedFramework</artifactId>
+			<artifactId>CustomFramework</artifactId>
 			<version>1.0.0</version>
 		</dependency>
 	</dependencies>

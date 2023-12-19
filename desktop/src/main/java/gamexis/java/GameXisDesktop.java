@@ -1,5 +1,6 @@
 package gamexis.java;
 
+import Space_Rocks.SpaceGame;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 
@@ -11,7 +12,7 @@ public class GameXisDesktop {
 		/*LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		new LwjglApplication(new GameXis(), config);*/
 
-		Game myGame = new StarFishGame();
-		new LwjglApplication(myGame, "Starfish Collector v1.2 ",800,600);
+		Game myGame = new SpaceGame();
+		new LwjglApplication(myGame, "Space Rock v1.0.0 ",800,600);
 	}
 }

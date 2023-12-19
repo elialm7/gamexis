@@ -7,6 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class SpaceShip extends BaseActor {
 
+
+    private Thrusters thrusters;
     public SpaceShip(float x, float y, Stage s) {
         super(x, y, s);
 
@@ -15,6 +17,9 @@ public class SpaceShip extends BaseActor {
         setAcceleration(200);
         setMaxSpeed(150);
         setDeceleration(10);
+        thrusters = new Thrusters(0,0, s);
+        addActor(thrusters);
+        thrusters.setPosition(-thrusters.getWidth(), getHeight()/2 - thrusters.getHeight()/2);
     }
 
     @Override
@@ -28,10 +33,14 @@ public class SpaceShip extends BaseActor {
         }
         if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
             rotateBy(-degreesPerSecond*dt);
+
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.UP)){
             accelerateAtAngle(getRotation());
+            thrusters.setVisible(true);
+        }else {
+            thrusters.setVisible(false);
         }
 
         applyPhysics(dt);

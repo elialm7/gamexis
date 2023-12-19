@@ -9,6 +9,8 @@ public class SpaceShip extends BaseActor {
 
 
     private Thrusters thrusters;
+    private Shield shield;
+    private int shieldpower;
     public SpaceShip(float x, float y, Stage s) {
         super(x, y, s);
 
@@ -20,6 +22,10 @@ public class SpaceShip extends BaseActor {
         thrusters = new Thrusters(0,0, s);
         addActor(thrusters);
         thrusters.setPosition(-thrusters.getWidth(), getHeight()/2 - thrusters.getHeight()/2);
+        shield = new Shield(0,0, s);
+        addActor(shield);
+        shield.centerAtPosition(getWidth()/2, getHeight()/2);
+        this.shieldpower = 100;
     }
 
     @Override
@@ -44,8 +50,11 @@ public class SpaceShip extends BaseActor {
         }
 
         applyPhysics(dt);
-       wrapAroundWorld();
-
+        wrapAroundWorld();
+        shield.setOpacity(shieldpower/100f);
+        if(shieldpower < 0){
+            shield.setVisible(false);
+        }
     }
 
 

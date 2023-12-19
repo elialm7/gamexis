@@ -192,6 +192,33 @@ public class BaseActor extends Actor {
     public void setMaxSpeed(float ms){
         this.maxSpeed = ms;
     }
+    public float getVelocityModule(){
+        return this.velocityVec.len();
+    }
+
+    public float getVelocityAngle(){
+        return this.velocityVec.angle();
+    }
+
+    public float getXvelocityComponent(){
+        return this.velocityVec.x;
+    }
+    public float getYvelocityComponent(){
+        return this.velocityVec.y;
+    }
+    public float getAccelerationModule(){
+        return this.accelerationVec.len();
+    }
+    public float getAccelerationAngle(){
+        return this.accelerationVec.angle();
+    }
+
+    public float getXaccelerationComponent(){
+        return this.accelerationVec.x;
+    }
+    public float getYaccelerationComponent(){
+        return this.accelerationVec.y;
+    }
     public void setDeceleration(float dec){
         this.deceleration = dec;
     }

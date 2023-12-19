@@ -12,7 +12,7 @@ public class StarFish extends BaseActor {
     private boolean collected;
     public StarFish(float x, float y, Stage s){
         super(x,y,s);
-        loadTexture("starfish.png");
+        loadTexture("starfishcollector/starfish.png");
         setBoundaryPolygon(8);
         this.collected = false;
         Action spin = Actions.rotateBy(30, 1);

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.compression.lzma.Base;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class BaseActor extends Actor {
+public class BaseActor extends Group {
 
     private Animation animation;
     private float elapsedtime;

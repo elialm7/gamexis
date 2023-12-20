@@ -10,13 +10,13 @@ import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ServidorTCP implements Runnable, IServidor {
+public class TCP implements Runnable, IServidor {
 
 
     private final ServerSocketChannel serverSocketChannel;
     private final Selector selector;
     private volatile boolean cerrado = false;
-    public ServidorTCP() {
+    public TCP() {
         try {
             serverSocketChannel = ServerSocketChannel.open();
             serverSocketChannel.bind(new InetSocketAddress(Servidor.PUERTO_TCP));

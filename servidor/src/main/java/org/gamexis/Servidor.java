@@ -1,9 +1,9 @@
-package org.gamexis.servidor;
+package org.gamexis;
 
 
-import org.gamexis.servidor.protocolo.UDP;
+import org.gamexis.protocolo.UDP;
+import org.gamexis.protocolo.TCP;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,14 +16,19 @@ public class Servidor extends Thread {
 
     private final UDP UDP_PRINCIPAL;
 
-    public Servidor( ) throws IOException {
+    private final TCP TCP;
+
+    public Servidor() {
         //Uso esa dirección porque es la primera entre el rango de direcciones multicast
+        TCP = new TCP();
         UDP_PRINCIPAL = new UDP("234.0.1.1");
     }
-
     public void run() {
-        servidoresUDP.submit(this.UDP_PRINCIPAL);
-        while(!UDP_PRINCIPAL.estaCerrado());
+        Thread servidorPrincipal = new Thread(this.TCP);
+        servidorPrincipal.start();
+
+        //servidoresUDP.submit(this.UDP_PRINCIPAL);
+        while(!this.TCP.estaCerrado());
         System.out.println("Cerrar");
     }
 

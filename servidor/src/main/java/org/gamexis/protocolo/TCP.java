@@ -1,13 +1,16 @@
-package org.gamexis.servidor.protocolo;
+package org.gamexis.protocolo;
 
-import org.gamexis.servidor.Servidor;
-import org.gamexis.servidor.IServidor;
+import org.gamexis.Servidor;
+import org.gamexis.IServidor;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 public class TCP implements Runnable, IServidor {
@@ -16,6 +19,7 @@ public class TCP implements Runnable, IServidor {
     private final ServerSocketChannel serverSocketChannel;
     private final Selector selector;
     private volatile boolean cerrado = false;
+    private final Map<String, SocketChannel> clientes = new HashMap<>();
     public TCP() {
         try {
             serverSocketChannel = ServerSocketChannel.open();
@@ -64,7 +68,10 @@ public class TCP implements Runnable, IServidor {
         SocketChannel socketChannel = serverSocketChannel.accept();
         socketChannel.configureBlocking(false);
         socketChannel.register(selector, SelectionKey.OP_READ);
+        String idCliente = "Cliente-"+System.currentTimeMillis();
+        clientes.put(idCliente,socketChannel);
         System.out.println("Cliente conectado desde: " + socketChannel.getRemoteAddress());
+        enviarMensaje(socketChannel,"Como estás maldita puta? Tu id es: "+ idCliente);
     }
     private void leerData(SelectionKey key) throws IOException {
         SocketChannel socketChannel = (SocketChannel) key.channel();
@@ -73,6 +80,8 @@ public class TCP implements Runnable, IServidor {
 
         if (bytesRead == -1) {
             socketChannel.close();
+            String idCliente = getClienteId(socketChannel);
+            clientes.remove(idCliente);
             System.out.println("Cliente desconectado: " + socketChannel.getRemoteAddress());
         } else if (bytesRead > 0) {
             buffer.flip();
@@ -82,10 +91,26 @@ public class TCP implements Runnable, IServidor {
             System.out.println("Mensaje recibido de " + socketChannel.getRemoteAddress() + ": " + message);
         }
     }
-
+    private String getClienteId(SocketChannel socketChannel) {
+        for (Map.Entry<String, SocketChannel> entry : clientes.entrySet()) {
+            if (entry.getValue().equals(socketChannel)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+    private void enviarMensaje (SocketChannel socketChannel, String mensaje) throws IOException {
+        ByteBuffer buffer = ByteBuffer.wrap(mensaje.getBytes(StandardCharsets.UTF_8));
+        socketChannel.write(buffer);
+    }
     @Override
     public void cerrar()  {
         cerrado = true;
+        try {
+            this.serverSocketChannel.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

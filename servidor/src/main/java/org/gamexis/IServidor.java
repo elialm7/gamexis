@@ -1,4 +1,4 @@
-package org.gamexis.servidor;
+package org.gamexis;
 
 import java.io.IOException;
 

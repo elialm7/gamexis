@@ -1,7 +1,7 @@
-package org.gamexis.servidor.protocolo;
+package org.gamexis.protocolo;
 
-import org.gamexis.servidor.Servidor;
-import org.gamexis.servidor.IServidor;
+import org.gamexis.Servidor;
+import org.gamexis.IServidor;
 
 import java.io.IOException;
 import java.net.*;

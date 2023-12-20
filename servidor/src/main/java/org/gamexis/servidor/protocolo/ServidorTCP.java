@@ -1,28 +1,31 @@
 package org.gamexis.servidor.protocolo;
 
-import org.gamexis.servidor.extension.Acciones;
+import org.gamexis.servidor.Servidor;
+import org.gamexis.servidor.IServidor;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Set;
 
-public class ServidorTCP implements Runnable, Acciones {
+public class ServidorTCP implements Runnable, IServidor {
 
-    private final int PUERTO;
-    private ServerSocketChannel canalSocketServidor;
+
+    private final ServerSocketChannel serverSocketChannel;
     private final Selector selector;
-
-    public ServidorTCP(int puertoTCP) {
-        this.PUERTO = puertoTCP;
+    private volatile boolean cerrado = false;
+    public ServidorTCP() {
         try {
-            canalSocketServidor = ServerSocketChannel.open();
+            serverSocketChannel = ServerSocketChannel.open();
+            serverSocketChannel.bind(new InetSocketAddress(Servidor.PUERTO_TCP));
+            serverSocketChannel.configureBlocking(false);
+
             selector = Selector.open();
-            canalSocketServidor.socket().bind(new InetSocketAddress(PUERTO));
-            canalSocketServidor.configureBlocking(false);
-            canalSocketServidor.register(selector, SelectionKey.OP_ACCEPT);
-            System.out.println("TCP Server listening on port " + PUERTO);
+            serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+            System.out.println("Servidor escuchando en el puerto " + Servidor.PUERTO_TCP);
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -31,9 +34,12 @@ public class ServidorTCP implements Runnable, Acciones {
     @Override
     public void run() {
         try {
-            while (true) {
+            while (!cerrado && !Thread.currentThread().isInterrupted()) {
                 int readyChannels = selector.select();
-                if (readyChannels == 0) continue;
+
+                if (readyChannels == 0) {
+                    continue;
+                }
 
                 Set<SelectionKey> selectedKeys = selector.selectedKeys();
                 Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
@@ -42,16 +48,9 @@ public class ServidorTCP implements Runnable, Acciones {
                     SelectionKey key = keyIterator.next();
 
                     if (key.isAcceptable()) {
-                        // Accept the new connection
-                        ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
-                        SocketChannel clientChannel = serverChannel.accept();
-                        clientChannel.configureBlocking(false);
-                        clientChannel.register(selector, SelectionKey.OP_READ);
-                        System.out.println("Accepted connection from: " + clientChannel.getRemoteAddress());
+                        aceptarConexion(serverSocketChannel, selector);
                     } else if (key.isReadable()) {
-                        // Handle TCP data
-                        SocketChannel clientChannel = (SocketChannel) key.channel();
-                      //  handleTCPData(clientChannel);
+                        leerData(key);
                     }
 
                     keyIterator.remove();
@@ -61,12 +60,32 @@ public class ServidorTCP implements Runnable, Acciones {
             throw new RuntimeException(e);
         }
     }
+    private void aceptarConexion(ServerSocketChannel serverSocketChannel, Selector selector) throws IOException {
+        SocketChannel socketChannel = serverSocketChannel.accept();
+        socketChannel.configureBlocking(false);
+        socketChannel.register(selector, SelectionKey.OP_READ);
+        System.out.println("Cliente conectado desde: " + socketChannel.getRemoteAddress());
+    }
+    private void leerData(SelectionKey key) throws IOException {
+        SocketChannel socketChannel = (SocketChannel) key.channel();
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        int bytesRead = socketChannel.read(buffer);
 
-
+        if (bytesRead == -1) {
+            socketChannel.close();
+            System.out.println("Cliente desconectado: " + socketChannel.getRemoteAddress());
+        } else if (bytesRead > 0) {
+            buffer.flip();
+            byte[] data = new byte[buffer.remaining()];
+            buffer.get(data);
+            String message = new String(data);
+            System.out.println("Mensaje recibido de " + socketChannel.getRemoteAddress() + ": " + message);
+        }
+    }
 
     @Override
-    public void cerrar() throws IOException {
-
+    public void cerrar()  {
+        cerrado = true;
     }
 
     @Override

@@ -26,7 +26,7 @@ public class Turtle extends BaseActor implements Serializable {
     public Turtle(float x, float y, Stage s){
         super(x, y, s);
         String[] filenames = {
-                "turtle-1.png", "turtle-2.png","turtle-3.png", "turtle-4.png", "turtle-5.png", "turtle-6.png"
+                "starfishcollector/turtle-1.png", "starfishcollector/turtle-2.png","starfishcollector/turtle-3.png", "starfishcollector/turtle-4.png", "starfishcollector/turtle-5.png", "starfishcollector/turtle-6.png"
         };
         loadAnimationFromFiles(filenames, 0.1f, true);
         setBoundaryPolygon(8);

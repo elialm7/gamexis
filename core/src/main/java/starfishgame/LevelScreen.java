@@ -15,7 +15,7 @@ public class LevelScreen extends BaseScreen {
     @Override
     public void initialize() {
         BaseActor ocean = new BaseActor(0, 0, mainStage);
-        ocean.loadTexture("water.jpg");
+        ocean.loadTexture("starfishcollector/water.jpg");
         ocean.setSize(800,600);
 
         new StarFish(400,400, mainStage);

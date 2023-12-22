@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.compression.lzma.Base;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class BaseActor extends Actor {
+public class BaseActor extends Group {
 
     private Animation animation;
     private float elapsedtime;
@@ -76,20 +77,37 @@ public class BaseActor extends Actor {
     }
 
 
+
     public void boundToWorld(){
         if(getX() < 0){
             setX(0);
         }
         if(getX() + getWidth() > worldBounds.width){
-            setX(worldBounds.x-getWidth());
+            setX(worldBounds.width - getWidth());
         }
         if(getY()<0){
             setY(0);
         }
         if(getY() + getHeight() > worldBounds.height){
-            setY(worldBounds.y-getHeight());
+            setY(worldBounds.height- getHeight());
         }
     }
+
+    public void wrapAroundWorld(){
+        if(getX() + getWidth() < 0){
+            setX(worldBounds.width);
+        }
+        if(getX()>worldBounds.width){
+            setX(-getWidth());
+        }
+        if(getY()+getHeight() < 0){
+            setY(worldBounds.height);
+        }
+        if(getY()> worldBounds.height){
+            setY(-getHeight());
+        }
+    }
+
 
     public static ArrayList<BaseActor> getList(Stage stage, Class<?> clazz){
         ArrayList<BaseActor> list = new ArrayList<>();

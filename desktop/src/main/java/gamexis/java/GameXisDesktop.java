@@ -1,5 +1,7 @@
 package gamexis.java;
 
+import Space_Rocks.SpaceGame;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
@@ -24,5 +26,7 @@ public class GameXisDesktop {
 		config.resizable = false;
 
 		new LwjglApplication(new CuadritosMoqueteros(), config);
+		/*Game myGame = new SpaceGame();
+		new LwjglApplication(myGame, "Space Rock v1.0.0 ",800,600);*/
 	}
 }

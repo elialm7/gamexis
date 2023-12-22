@@ -3,8 +3,8 @@ package gamexis.java;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import soylaverga.shooter.CuadritosMoqueteros;
-import soylaverga.shooter.utils.GameConstants;
+import multijugador.shooter.CuadritosMoqueteros;
+import multijugador.shooter.utils.GameConstants;
 
 public class GameXisDesktop {
 

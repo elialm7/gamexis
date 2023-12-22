@@ -1,8 +1,8 @@
-package org.gamexis.servidor.extension;
+package org.gamexis;
 
 import java.io.IOException;
 
-public interface Acciones {
+public interface IServidor {
     void cerrar() throws IOException;
     boolean estaCerrado();
 }

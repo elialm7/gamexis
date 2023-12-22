@@ -1,6 +1,7 @@
-package org.gamexis.servidor.protocolo;
+package org.gamexis.protocolo;
 
-import org.gamexis.servidor.extension.Acciones;
+import org.gamexis.Servidor;
+import org.gamexis.IServidor;
 
 import java.io.IOException;
 import java.net.*;
@@ -10,17 +11,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ServidorUDP implements Runnable, Acciones {
+public class UDP implements Runnable, IServidor {
 
     private final DatagramChannel channel;
     private final InetAddress group;
     private final Set<SocketAddress> miembros;
     private volatile boolean cerrado = false;
 
-    public ServidorUDP(int puerto, String direccionMulticast) {
+    public UDP(String direccionMulticast) {
         try {
             channel = DatagramChannel.open();
-            channel.bind(new InetSocketAddress(puerto));
+            channel.bind(new InetSocketAddress(Servidor.PUERTO_UDP));
             group = InetAddress.getByName(direccionMulticast);
             miembros = new HashSet<>();
             this.channel.join(group, NetworkInterface.getByInetAddress(InetAddress.getLocalHost()));
@@ -72,6 +73,7 @@ public class ServidorUDP implements Runnable, Acciones {
             throw new RuntimeException("Error en el servidor UDP", e);
         }
     }
+
 
     private void enviarMensajeATodos(String message) throws IOException {
         // Envía el mensaje a cada miembro del grupo multicast

@@ -1,4 +1,4 @@
-import org.gamexis.servidor.Servidor;
+import org.gamexis.Servidor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,7 +9,7 @@ public class AbrirServidor {
     private Servidor servidor;
 
     @Before
-    public void setUp() throws IOException {
+    public void setUp() {
         servidor = new Servidor();
 
     }

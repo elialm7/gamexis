@@ -1,0 +1,7 @@
+include 'desktop', 'core'
+include 'game-framework'
+include 'game-cliente'
+include 'game-servidor-headless'
+include 'game-serializables'
+include 'game-servidor'
+

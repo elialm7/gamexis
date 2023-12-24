@@ -1,5 +1,7 @@
 ## Java
 
+**/build/**
+
 *.class
 *.war
 *.ear

@@ -1,10 +1,7 @@
 package com.multijugador.shooter;
 
 
-import multijugador.network.messages.GameWorldMessage;
-import multijugador.network.messages.LoginMessage;
-import multijugador.network.messages.LogoutMessage;
-import multijugador.network.messages.PlayerDied;
+import com.multijugador.network.messages.*;
 
 public interface OMessageListener {
 

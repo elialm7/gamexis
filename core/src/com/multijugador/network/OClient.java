@@ -3,15 +3,15 @@ package com.multijugador.network;
 import java.io.IOException;
 import java.net.InetAddress;
 
+import com.multijugador.network.messages.*;
 import com.multijugador.shooter.OMessageListener;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+
 
 import com.badlogic.gdx.Gdx;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import multijugador.network.messages.*;
+
 
 public class OClient {
 
@@ -20,7 +20,7 @@ public class OClient {
 
 	private String inetAddress;
 
-	private Logger logger = Logger.getLogger(OClient.class);
+	//private Logger logger = Logger.getLogger(OClient.class);
 
 	public OClient(String inetAddress, OMessageListener game) {
 
@@ -35,10 +35,10 @@ public class OClient {
 	public void connect() {
 		client.start();
 		try {
-			logger.debug("Attempting to connect args[0]: " + inetAddress);
+			//logger.debug("Attempting to connect args[0]: " + inetAddress);
 			client.connect(5000, InetAddress.getByName(inetAddress), 1234, 1235);
 		} catch (IOException e) {
-			logger.log(Level.ALL, e);
+			//logger.log(Level.ALL, e);
 		}
 	}
 

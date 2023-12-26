@@ -2,9 +2,10 @@ package com.multijugador.shooter.utils;
 
 
 
+import com.multijugador.network.messages.GameWorldMessage;
 import com.multijugador.shooter.shapes.Bullet;
 import com.multijugador.shooter.shapes.Enemy;
-import multijugador.network.messages.GameWorldMessage;
+
 import com.multijugador.shooter.shapes.Player;
 
 import java.util.ArrayList;

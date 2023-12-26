@@ -2,8 +2,9 @@ package com.multijugador.shooter.input;
 
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
-import multijugador.states.PlayState;
-import multijugador.states.State;
+import com.multijugador.states.PlayState;
+import com.multijugador.states.State;
+
 
 /**
  * Manejador de entrada para cuando el jugador esté jugando.

@@ -2,12 +2,12 @@ package com.multijugador.shooter;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import org.apache.log4j.Logger;
-import multijugador.states.State;
-import multijugador.states.StateController;
+import com.multijugador.states.State;
+import com.multijugador.states.StateController;
+
 
 public class CuadritosMoqueteros extends ApplicationAdapter {
-	private static Logger logger = Logger.getLogger(CuadritosMoqueteros.class);
+	//private static Logger logger = Logger.getLogger(CuadritosMoqueteros.class);
 	private StateController sc;
 
 	private String inetAddress = "localhost";

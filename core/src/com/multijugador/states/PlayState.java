@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.multijugador.network.OClient;
+import com.multijugador.network.messages.*;
+import com.multijugador.*;
 import com.multijugador.shooter.OMessageListener;
 import com.multijugador.shooter.input.PlayStateInput;
 import com.multijugador.shooter.shapes.AimLine;
@@ -21,7 +23,6 @@ import com.multijugador.shooter.shapes.Player;
 import com.multijugador.shooter.utils.GameConstants;
 import com.multijugador.shooter.utils.GameUtils;
 import com.multijugador.shooter.utils.OMessageParser;
-import multijugador.network.messages.*;
 
 /**
  * State de juego

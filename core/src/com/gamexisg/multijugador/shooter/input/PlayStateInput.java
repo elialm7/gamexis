@@ -29,11 +29,12 @@ public class PlayStateInput extends InputAdapter {
 		return super.scrolled(amountX, amountY);
 	}
 
+
 	@Override
 	public boolean keyDown(int keycode) {
 
 		switch (keycode) {
-		case Keys.SPACE:
+			case Keys.E:
 			playState.shoot();
 			break;
 		case Keys.M:

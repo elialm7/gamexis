@@ -12,7 +12,10 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.12.1"
+    implementation "com.badlogicgames.gdx:gdx-platform:1.12.1:natives-desktop"
     implementation 'com.badlogicgames.gdx:gdx-backend-headless:1.12.1'
+
     // https://mvnrepository.com/artifact/com.esotericsoftware/kryonet
     implementation group: 'com.esotericsoftware', name: 'kryonet', version: '2.22.0-RC1'
     // https://mvnrepository.com/artifact/log4j/log4j

@@ -32,7 +32,7 @@ public class AimLine {
 
 	public void update(float deltaTime) {
 
-		if (Gdx.input.isButtonPressed(Buttons.LEFT)) {
+		if (Gdx.input.isButtonPressed(Buttons.RIGHT)) {
 			Vector3 up = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
 			end.x = up.x;
 			end.y = up.y;

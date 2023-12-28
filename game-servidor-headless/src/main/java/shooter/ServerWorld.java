@@ -17,19 +17,19 @@ import util.MessageCreator;
 
 public class ServerWorld implements OMessageListener {
 
-	private List<Player> players;
-	private List<Enemy> enemies;
+	private final List<Player> players;
+	private final List<Enemy> enemies;
 	private List<Bullet> bullets;
 
-	private OServer oServer;
+	private final OServer oServer;
 
 	private float deltaTime = 0;
 
 	private float enemyTime = 0f;
 
-	private LoginController loginController;
+	private final LoginController loginController;
 
-	private Logger logger = Logger.getLogger(ServerWorld.class);
+	private final Logger logger = Logger.getLogger(ServerWorld.class);
 
 	public ServerWorld() {
 
@@ -82,33 +82,35 @@ public class ServerWorld implements OMessageListener {
 	}
 
 	private void checkCollision() {
+		for(Enemy e: enemies){
+			for(Player p: players){
+				if(e.isVisible() && p.getBoundRect().overlaps(e.getBoundRect())){
+					e.setVisible(!e.isVisible());
+					p.hit();
+				}
+			}
+		}
 
 		for (Bullet b : bullets) {
-
 			for (Enemy e : enemies) {
-
 				if (b.isVisible() && e.getBoundRect().overlaps(b.getBoundRect())) {
-					b.setVisible(false);
-					e.setVisible(false);
+					b.setVisible(!b.isVisible());
+					e.setVisible(b.isVisible());
 					players.stream().filter(p -> p.getId() == b.getId()).findFirst().ifPresent(Player::increaseHealth);
 				}
 			}
 			for (Player p : players) {
 				if (b.isVisible() && p.getBoundRect().overlaps(b.getBoundRect()) && p.getId() != b.getId()) {
-					b.setVisible(false);
+					b.setVisible(!b.isVisible());
 					p.hit();
 					if (!p.isAlive()) {
-
 						PlayerDied m = new PlayerDied();
 						m.setId(p.getId());
 						oServer.sendToAllUDP(m);
 					}
-
 				}
 			}
-
 		}
-
 	}
 
 	@Override

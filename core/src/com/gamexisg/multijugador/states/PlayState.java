@@ -78,14 +78,15 @@ public class PlayState extends State implements OMessageListener {
 
 		sr.begin(ShapeType.Line);
 		sr.setColor(Color.RED);
-		players.forEach(p -> p.render(sr));
+		players.forEach(p -> p.render(sr,camera.combined));
 		sr.setColor(Color.WHITE);
 		enemies.forEach(e -> e.render(sr));
 		bullets.forEach(b -> b.render(sr));
 		sr.setColor(Color.BLUE);
-		player.render(sr);
+		player.render(sr,camera.combined);
 		sr.setColor(Color.WHITE);
 		aimLine.render(sr);
+
 		followPlayer();
 		sr.end();
 

@@ -1,7 +1,5 @@
 package com.gamexisg.multijugador.shooter.utils;
 
-
-
 import com.gamexisg.multijugador.shooter.shapes.Bullet;
 import com.gamexisg.multijugador.shooter.shapes.Enemy;
 import com.gamexisg.multijugador.network.messages.GameWorldMessage;

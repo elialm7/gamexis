@@ -15,8 +15,7 @@ public class DesktopLauncher {
 
 
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		//config.setWindowSizeLimits( GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT, 1400, 1400);
-
+		//config.setWindowSizeLimits( GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT,GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT);
 		config.setForegroundFPS(60);
 		config.setResizable(false);
 		new Lwjgl3Application(new CuadritosMoqueteros(), config);

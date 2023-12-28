@@ -15,7 +15,7 @@ public class MenuState extends State {
 	public MenuState(StateController sc) {
 		super(sc);
 		ip = new MenuStateInput(this);
-		smallFont = GameUtils.generateBitmapFont(32, Color.WHITE);
+		smallFont = GameUtils.generateBitmapFont(15, Color.WHITE);
 	}
 
 	@Override
@@ -29,9 +29,9 @@ public class MenuState extends State {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		sb.begin();
-		GameUtils.renderCenter("Menu", sb, bitmapFont);
-		GameUtils.renderCenter("Presionar ESPACIO para continuar", sb, smallFont, 0.5f);
-		GameUtils.renderCenter("Q para salir.", sb, smallFont, 0.6f);
+		GameUtils.renderCenter("Menu", sb, bitmapFont, 0.1f);
+		GameUtils.renderCenter("Presionar ESPACIO para continuar", sb, smallFont, 0.2f);
+		GameUtils.renderCenter("Q para salir.", sb, smallFont, 0.3f);
 		sb.end();
 
 	}

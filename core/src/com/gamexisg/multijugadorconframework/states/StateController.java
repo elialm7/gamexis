@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import java.util.HashMap;
 import java.util.Map;
 
+import static GameLoop.BaseGame.setActiveScreen;
+
 
 /**
  * Clase responsable de contrar los states dentro del juego. Realiza los renders y updates del current state

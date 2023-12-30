@@ -19,11 +19,11 @@ import java.util.Map;
 public class StateController {
 
 	/** Hashmap para almacenar states. */
-	private Map<Integer, State> stateMap;
+	private final Map<Integer, State> stateMap;
 	/** State object para almacenar el current state */
 	private State currentState;
 	/** Ip address del server */
-	private String inetAddress;
+	private final String inetAddress;
 
 	public StateController(String ip) {
 
@@ -55,13 +55,14 @@ public class StateController {
 			stateMap.put(stateEnum.ordinal(), currentState);
 		}
 		Gdx.input.setInputProcessor(currentState.ip);
+		setActiveScreen(currentState);
 
 	}
 
 
-	public void render() {
+	public void render(float delta) {
 
-		currentState.render();
+		currentState.render(delta);
 	}
 
 	/**

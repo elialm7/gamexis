@@ -14,12 +14,12 @@ import java.net.InetAddress;
 
 public class OClient {
 
-	private Client client;
-	private OMessageListener game;
+	private final Client client;
+	private final OMessageListener game;
 
 	private String inetAddress;
 
-	private Logger logger = Logger.getLogger(OClient.class);
+	private final Logger logger = Logger.getLogger(OClient.class);
 
 	public OClient(String inetAddress, OMessageListener game) {
 
@@ -34,7 +34,7 @@ public class OClient {
 	public void connect() {
 		client.start();
 		try {
-			logger.debug("Attempting to connect args[0]: " + inetAddress);
+			logger.debug("Intentado conectarse en: " + inetAddress);
 			client.connect(5000, InetAddress.getByName(inetAddress), 1234, 1235);
 		} catch (IOException e) {
 			logger.log(Level.ALL, e);
@@ -55,14 +55,14 @@ public class OClient {
 						OClient.this.game.loginReceieved(m);
 
 					} else if (object instanceof LogoutMessage) {
-						LogoutMessage logoutMessage = (LogoutMessage) object;
-						OClient.this.game.logoutReceieved(logoutMessage);
+						LogoutMessage m = (LogoutMessage) object;
+						OClient.this.game.logoutReceieved(m);
+
 					} else if (object instanceof GameWorldMessage) {
 
 						GameWorldMessage m = (GameWorldMessage) object;
 						OClient.this.game.gwmReceived(m);
 					} else if (object instanceof PlayerDied) {
-
 						PlayerDied m = (PlayerDied) object;
 						OClient.this.game.playerDiedReceived(m);
 					}

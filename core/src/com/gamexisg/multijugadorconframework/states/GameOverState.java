@@ -26,7 +26,7 @@ public class GameOverState extends State {
 	}
 
 	@Override
-	public void render() {
+	public void render(float delta) {
 		float red = 50f;
 		float green = 63f;
 		float blue = 94f;
@@ -37,6 +37,21 @@ public class GameOverState extends State {
 		GameUtils.renderCenter("Perdeu", sb, bitmapFont);
 		GameUtils.renderCenter("Presionar R para reiniciar.", sb, smallFont, 0.6f);
 		sb.end();
+	}
+
+	@Override
+	public void pause() {
+
+	}
+
+	@Override
+	public void resume() {
+
+	}
+
+	@Override
+	public void initialize() {
+
 	}
 
 	@Override
@@ -52,5 +67,6 @@ public class GameOverState extends State {
 		PlayState playState = (PlayState) this.sc.getStateMap().get(StateEnum.PLAY_STATE.ordinal());
 		playState.restart();
 	}
+
 
 }

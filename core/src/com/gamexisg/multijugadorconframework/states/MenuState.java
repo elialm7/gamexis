@@ -10,7 +10,7 @@ import com.gamexisg.multijugadorconframework.shooter.utils.GameUtils;
 
 public class MenuState extends State {
 
-	private BitmapFont smallFont;
+	private final BitmapFont smallFont;
 
 	public MenuState(StateController sc) {
 		super(sc);
@@ -19,7 +19,7 @@ public class MenuState extends State {
 	}
 
 	@Override
-	public void render() {
+	public void render(float delta) {
 
 		// bluish background.
 		float red = 50f;
@@ -34,6 +34,20 @@ public class MenuState extends State {
 		GameUtils.renderCenter("Q para salir.", sb, smallFont, 0.3f);
 		sb.end();
 
+	}
+
+	@Override
+	public void pause() {
+
+	}
+
+	@Override
+	public void resume() {
+
+	}
+
+	@Override
+	public void initialize() {
 	}
 
 	@Override
@@ -57,5 +71,4 @@ public class MenuState extends State {
 		playState.restart();
 
 	}
-
 }

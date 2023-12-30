@@ -7,14 +7,25 @@ public class Enemy {
 
 	private float x;
 	private float y;
+
+	private int id;
 	private float size;
 	private boolean visible = true;
 
-	public Enemy(float x, float y, float size) {
+	public Enemy(int id, float x, float y, float size) {
+		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.size = size;
 
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public void render(ShapeRenderer sr) {

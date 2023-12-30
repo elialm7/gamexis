@@ -6,14 +6,24 @@ public class Enemy {
 
 	private float x;
 	private float y;
+	private int id;
 	private boolean visible = true;
 	private Rectangle boundRect;
 
-	public Enemy(float x, float y, float size) {
+	public Enemy(int id, float x, float y, float size) {
+		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.boundRect = new Rectangle(x, y, size, size);
 
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public void update(float deltaTime) {
@@ -39,6 +49,7 @@ public class Enemy {
 	}
 
 	public boolean isVisible() {
+		if(!visible) System.out.println("Off id " + id);
 		return visible;
 	}
 

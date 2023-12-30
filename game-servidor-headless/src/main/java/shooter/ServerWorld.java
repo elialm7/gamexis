@@ -29,6 +29,8 @@ public class ServerWorld implements OMessageListener {
 
 	private final LoginController loginController;
 
+	private int idEnemyNext = 0;
+
 	private final Logger logger = Logger.getLogger(ServerWorld.class);
 
 	public ServerWorld() {
@@ -76,14 +78,16 @@ public class ServerWorld implements OMessageListener {
 			enemyTime = 0;
 			if (enemies.size() % 5 == 0)
 				logger.debug("Cant. enemigos.: " + enemies.size());
-			Enemy e = new Enemy(new SecureRandom().nextInt(1000), new SecureRandom().nextInt(1000), 10);
+			idEnemyNext++;
+			Enemy e = new Enemy(idEnemyNext,new SecureRandom().nextInt(1000), new SecureRandom().nextInt(1000), 10);
 			enemies.add(e);
 		}
 	}
 
 	private void checkCollision() {
-		for(Enemy e: enemies){
-			for(Player p: players){
+		for(Player p: players){
+			checkIsAlive(p);
+			for(Enemy e: enemies){
 				if(e.isVisible() && p.getBoundRect().overlaps(e.getBoundRect())){
 					e.setVisible(!e.isVisible());
 					p.hit();
@@ -103,13 +107,17 @@ public class ServerWorld implements OMessageListener {
 				if (b.isVisible() && p.getBoundRect().overlaps(b.getBoundRect()) && p.getId() != b.getId()) {
 					b.setVisible(!b.isVisible());
 					p.hit();
-					if (!p.isAlive()) {
-						PlayerDied m = new PlayerDied();
-						m.setId(p.getId());
-						oServer.sendToAllUDP(m);
-					}
 				}
 			}
+		}
+	}
+	private void checkIsAlive(Player p){
+		if (!p.isAlive()) {
+			logger.debug("Murió el jugador "+p.getId());
+			PlayerDied m = new PlayerDied();
+			m.setId(p.getId());
+			oServer.sendToAllUDP(m);
+
 		}
 	}
 
@@ -138,20 +146,20 @@ public class ServerWorld implements OMessageListener {
 	public void playerMovedReceived(PositionMessage move) {
 
 		players.stream().filter(p -> p.getId() == move.getId()).findFirst().ifPresent(p -> {
-
+			int d = 200;
 			Vector2 v = p.getPosition();
 			switch (move.getDirection()) {
 			case LEFT:
-				v.x -= deltaTime * 200;
+				v.x -= deltaTime * d;
 				break;
 			case RIGHT:
-				v.x += deltaTime * 200;
+				v.x += deltaTime * d;
 				break;
 			case UP:
-				v.y -= deltaTime * 200;
+				v.y -= deltaTime * d;
 				break;
 			case DOWN:
-				v.y += deltaTime * 200;
+				v.y += deltaTime * d;
 				break;
 			default:
 				break;

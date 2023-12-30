@@ -1,5 +1,6 @@
 package com.gamexisg.multijugadorconframework.states;
 
+import GameLoop.BaseScreen;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -23,10 +24,12 @@ import com.gamexisg.multijugadorconframework.shooter.utils.GameUtils;
 
  *
  */
-public abstract class State {
+public abstract class State extends BaseScreen {
 
 	protected OrthographicCamera camera;
 	protected InputProcessor ip;
+
+
 	protected ShapeRenderer sr;
 	protected SpriteBatch sb;
 	protected BitmapFont bitmapFont;
@@ -52,7 +55,7 @@ public abstract class State {
 
 	}
 
-	public abstract void render();
+	public abstract void render(float delta);
 
 	public abstract void update(float deltaTime);
 
@@ -67,7 +70,7 @@ public abstract class State {
 	/** Enum for each state */
 	public enum StateEnum {
 
-		PLAY_STATE, MENU_STATE, GAME_OVER_STATE, PAUSE_STATE
+		PLAY_STATE, MENU_STATE, GAME_OVER_STATE
 
 	}
 

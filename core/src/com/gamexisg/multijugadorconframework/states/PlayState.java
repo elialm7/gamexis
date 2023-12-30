@@ -3,6 +3,7 @@ package com.gamexisg.multijugadorconframework.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.gamexisg.multijugadorconframework.network.OClient;
 import com.gamexisg.multijugadorconframework.network.messages.*;
 import com.gamexisg.multijugadorconframework.shooter.OMessageListener;
+import com.gamexisg.multijugadorconframework.shooter.character.Archer;
 import com.gamexisg.multijugadorconframework.shooter.input.PlayStateInput;
 import com.gamexisg.multijugadorconframework.shooter.shapes.AimLine;
 import com.gamexisg.multijugadorconframework.shooter.shapes.Bullet;
@@ -31,6 +33,9 @@ import java.util.List;
 public class PlayState extends State implements OMessageListener {
 
 	private Player player;
+
+	private Archer archer;
+
 	private List<Player> players;
 	private List<Enemy> enemies;
 	private List<Bullet> bullets;
@@ -38,11 +43,12 @@ public class PlayState extends State implements OMessageListener {
 
 	private OClient myclient;
 
-	private BitmapFont healthFont;
+	private final BitmapFont healthFont;
 
 	public PlayState(StateController sc) {
 		super(sc);
-
+		camera = (OrthographicCamera) mainStage.getCamera();
+		camera.setToOrtho(true);
 		init();
 		ip = new PlayStateInput(this);
 		healthFont = GameUtils.generateBitmapFont(20, Color.WHITE);
@@ -68,7 +74,7 @@ public class PlayState extends State implements OMessageListener {
 	}
 
 	@Override
-	public void render() {
+	public void render(float delta) {
 		sr.setProjectionMatrix(camera.combined);
 		camera.update();
 		if (player == null)
@@ -78,12 +84,12 @@ public class PlayState extends State implements OMessageListener {
 
 		sr.begin(ShapeType.Line);
 		sr.setColor(Color.RED);
-		players.forEach(p -> p.render(sr,camera.combined));
+		players.forEach(p -> p.render(sr));
 		sr.setColor(Color.WHITE);
 		enemies.forEach(e -> e.render(sr));
 		bullets.forEach(b -> b.render(sr));
 		sr.setColor(Color.BLUE);
-		player.render(sr,camera.combined);
+		player.render(sr);
 		sr.setColor(Color.WHITE);
 		aimLine.render(sr);
 
@@ -93,8 +99,15 @@ public class PlayState extends State implements OMessageListener {
 		sb.begin();
 		GameUtils.renderCenter("Salud: " + player.getHealth(), sb, healthFont, 0.1f);
 		sb.end();
-
+		mainStage.act(delta);
+		mainStage.draw();
 	}
+
+	@Override
+	public void pause() {}
+
+	@Override
+	public void resume() {}
 
 	/**
 	 * Funcion de camara para seguir al jugador de forma suave.
@@ -106,9 +119,19 @@ public class PlayState extends State implements OMessageListener {
 	}
 
 	@Override
+	public void initialize() {
+		archer = new Archer(0,0,mainStage);
+		archer.setSize(50,50);
+		archer.setOrigin(archer.getWidth() / 2, archer.getHeight() / 2);
+
+	}
+
+	@Override
 	public void update(float deltaTime) {
 		if (player == null)
 			return;
+		if(archer.getX()!=player.getPosition().x || archer.getY() != player.getPosition().y)
+			archer.setPosition(player.getPosition().x,player.getPosition().y);
 		aimLine.setBegin(player.getCenter());
 		aimLine.update(deltaTime);
 		processInputs();
@@ -125,7 +148,6 @@ public class PlayState extends State implements OMessageListener {
 	}
 
 	public void shoot() {
-
 		ShootMessage m = new ShootMessage();
 		m.setId(player.getId());
 		m.setAngleDeg(aimLine.getAngle());
@@ -134,7 +156,6 @@ public class PlayState extends State implements OMessageListener {
 	}
 
 	private void processInputs() {
-
 		PositionMessage p = new PositionMessage();
 		p.setId(player.getId());
 		if (Gdx.input.isKeyPressed(Keys.S)) {
@@ -158,7 +179,6 @@ public class PlayState extends State implements OMessageListener {
 
 	@Override
 	public void loginReceieved(LoginMessage m) {
-
 		player = new Player(m.getX(), m.getY(), 50);
 		player.setId(m.getId());
 	}
@@ -178,15 +198,13 @@ public class PlayState extends State implements OMessageListener {
 		myclient.sendTCP(mm);
 		myclient.close();
 		this.getSc().setState(StateEnum.GAME_OVER_STATE);
-
 	}
 
 	@Override
 	public void gwmReceived(GameWorldMessage m) {
 
-		enemies = OMessageParser.getEnemiesFromGWM(m);
+		OMessageParser.getEnemiesFromGWM(m, enemies);
 		bullets = OMessageParser.getBulletsFromGWM(m);
-
 		players = OMessageParser.getPlayersFromGWM(m);
 
 		if (player == null)
@@ -203,10 +221,8 @@ public class PlayState extends State implements OMessageListener {
 
 	@Override
 	public void dispose() {
-
 		LogoutMessage m = new LogoutMessage();
 		m.setId(player.getId());
 		myclient.sendTCP(m);
 	}
-
 }

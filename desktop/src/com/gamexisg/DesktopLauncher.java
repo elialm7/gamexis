@@ -2,8 +2,7 @@ package com.gamexisg;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.gamexisg.multijugador.shooter.CuadritosMoqueteros;
-import com.gamexisg.multijugador.shooter.utils.GameConstants;
+import com.gamexisg.multijugadorconframework.shooter.CuadritosMoqueteros;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {

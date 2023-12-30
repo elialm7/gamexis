@@ -14,23 +14,29 @@ public class OMessageParser {
 	private OMessageParser() {
 	}
 
-	public static List<Enemy> getEnemiesFromGWM(GameWorldMessage m) {
+	public static void getEnemiesFromGWM(GameWorldMessage m, List<Enemy> enemies) {
 
 		float[] temp = m.getEnemies();
-		List<Enemy> elist = new ArrayList<>();
-		for (int i = 0; i < temp.length / 2; i++) {
-
-			float x = temp[i * 2];
-			float y = temp[i * 2 + 1];
-
-			Enemy e = new Enemy(x, y, 10);
-			elist.add(e);
-
+		int dim = temp.length/3;
+		int ids[] = new int[dim];
+		for (int i = 0; i < dim; i++) {
+			float x = temp[i * 3];
+			float y = temp[i * 3 + 1];
+			int id = (int) temp[i * 3 + 2];
+			ids[i] = id;
+			Enemy e = new Enemy(id, x, y, 10);
+			enemies.add(e);
 		}
-		return elist;
-
+		enemies.removeIf(enemy -> !containsId(ids, enemy.getId()));
 	}
-
+	private static boolean containsId(int[] ids, int id) {
+		for (int validId : ids) {
+			if (validId == id) {
+				return true;
+			}
+		}
+		return false;
+	}
 	public static List<Player> getPlayersFromGWM(GameWorldMessage m) {
 
 		float[] tp = m.getPlayers();

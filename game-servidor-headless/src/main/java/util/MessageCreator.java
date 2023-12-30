@@ -17,11 +17,12 @@ public class MessageCreator {
     public static GameWorldMessage generateGWMMessage(List<Enemy> enemies, List<Bullet> bullets, List<Player> players) {
 
         GameWorldMessage gwm = new GameWorldMessage();
-        float[] coordinates = new float[enemies.size() * 2];
+        float[] coordinates = new float[enemies.size() * 3];
 
         for (int i = 0; i < enemies.size(); i++) {
-            coordinates[i * 2] = enemies.get(i).getX();
-            coordinates[i * 2 + 1] = enemies.get(i).getY();
+            coordinates[i * 3] = enemies.get(i).getX();
+            coordinates[i * 3 + 1] = enemies.get(i).getY();
+            coordinates[i * 3 + 2] = enemies.get(i).getId();
         }
 
         gwm.setEnemies(coordinates);

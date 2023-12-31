@@ -1,4 +1,4 @@
-package com.gamexisg.multijugador.shooter.shapes;
+package com.gamexisg.multijugadorconframework.shooter.shapes;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player {
 	private final float size;
-
 	private Vector2 position;
 	private int id = -1;
 	private int health;

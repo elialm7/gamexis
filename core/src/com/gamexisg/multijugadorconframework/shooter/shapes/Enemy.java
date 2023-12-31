@@ -1,20 +1,22 @@
-package shooter.shapes;
+package com.gamexisg.multijugadorconframework.shooter.shapes;
 
-import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Enemy {
 
 	private float x;
 	private float y;
+
 	private int id;
+	private float size;
 	private boolean visible = true;
-	private Rectangle boundRect;
 
 	public Enemy(int id, float x, float y, float size) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
-		this.boundRect = new Rectangle(x, y, size, size);
+		this.size = size;
 
 	}
 
@@ -26,10 +28,11 @@ public class Enemy {
 		this.id = id;
 	}
 
-	public void update(float deltaTime) {
+	public void render(ShapeRenderer sr) {
 
-		this.boundRect.x = x;
-		this.boundRect.y = y;
+		sr.setColor(Color.CYAN);
+		sr.circle(x, y, size);
+		sr.setColor(Color.WHITE);
 	}
 
 	public void setX(float x) {
@@ -49,7 +52,6 @@ public class Enemy {
 	}
 
 	public boolean isVisible() {
-		if(!visible) System.out.println("Off id " + id);
 		return visible;
 	}
 
@@ -57,7 +59,4 @@ public class Enemy {
 		this.visible = visible;
 	}
 
-	public Rectangle getBoundRect() {
-		return boundRect;
-	}
 }

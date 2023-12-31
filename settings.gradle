@@ -1,4 +1,4 @@
-include 'desktop', 'core'
+include 'desktop', 'core', 'game-framework'
 include 'game-framework'
 include 'game-cliente'
 include 'game-servidor-headless'

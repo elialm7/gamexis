@@ -26,6 +26,9 @@ public class Player {
 
 		this.boundRect.x = position.x;
 		this.boundRect.y = position.y;
+		if (this.health <= 0) {
+			this.alive = false;
+		}
 	}
 
 	public void setPosition(Vector2 position) {
@@ -64,9 +67,6 @@ public class Player {
 
 	public void hit() {
 		this.health -= 10;
-		if (this.health <= 0) {
-			this.alive = false;
-		}
 	}
 
 }

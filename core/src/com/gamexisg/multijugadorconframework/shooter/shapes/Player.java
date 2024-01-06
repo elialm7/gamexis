@@ -14,7 +14,7 @@ public class Player {
 	private int id = -1;
 	private int health;
 
-	private final Vector2 center;
+	private Vector2 center;
 
 	public Player(float x, float y, float size) {
 		this.position = new Vector2(x, y);
@@ -36,6 +36,7 @@ public class Player {
 
 	public void setPosition(Vector2 position) {
 		this.position = position;
+		this.center = new Vector2(position.x+size/2,position.y+size/2);
 	}
 
 	public Vector2 getCenter() {

@@ -9,14 +9,13 @@ public class Enemy {
 	private float y;
 
 	private int id;
-	private float size;
+
 	private boolean visible = true;
 
-	public Enemy(int id, float x, float y, float size) {
+	public Enemy(int id, float x, float y) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
-		this.size = size;
 
 	}
 
@@ -28,12 +27,12 @@ public class Enemy {
 		this.id = id;
 	}
 
-	public void render(ShapeRenderer sr) {
+	/*public void render(ShapeRenderer sr) {
 
 		sr.setColor(Color.CYAN);
-		sr.circle(x, y, size);
+		sr.circle(x, y, 10f);
 		sr.setColor(Color.WHITE);
-	}
+	}*/
 
 	public void setX(float x) {
 		this.x = x;

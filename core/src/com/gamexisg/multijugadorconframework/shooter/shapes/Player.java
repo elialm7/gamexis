@@ -23,7 +23,7 @@ public class Player {
 		center = new Vector2(x, y);
 	}
 
-	public void render(ShapeRenderer sr) {
+	/*public void render(ShapeRenderer sr) {
 		sr.rect(position.x, position.y, size, size);
 		sr.end();
 		sr.begin(ShapeType.Filled);
@@ -32,7 +32,7 @@ public class Player {
 		sr.begin(ShapeType.Line);
 		center.x = position.x + size / 2;
 		center.y = position.y + size / 2;
-	}
+	}*/
 
 	public void setPosition(Vector2 position) {
 		this.position = position;

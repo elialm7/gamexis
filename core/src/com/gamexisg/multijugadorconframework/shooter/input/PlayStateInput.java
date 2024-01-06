@@ -1,5 +1,6 @@
 package com.gamexisg.multijugadorconframework.shooter.input;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 import com.gamexisg.multijugadorconframework.states.PlayState;
@@ -33,19 +34,19 @@ public class PlayStateInput extends InputAdapter {
 	@Override
 	public boolean keyDown(int keycode) {
 
-		switch (keycode) {
-			case Keys.E:
-			playState.shoot();
-			break;
-		case Keys.M:
-			playState.getSc().setState(State.StateEnum.MENU_STATE);
-			break;
-
-		default:
-			break;
-		}
+        if (keycode == Keys.M) {
+            playState.getSc().setState(State.StateEnum.MENU_STATE);
+        }
 
 		return true;
 	}
 
+	@Override
+	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+
+		if (button == Input.Buttons.LEFT) {
+			playState.shoot();
+		}
+		return true;
+	}
 }

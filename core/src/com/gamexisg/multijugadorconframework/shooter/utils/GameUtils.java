@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 
 public class GameUtils {
@@ -24,14 +27,6 @@ public class GameUtils {
 		parameter.minFilter = TextureFilter.Linear;
 		return generator.generateFont(parameter);
 	}
-
-	/*public static void renderCenter(String text, Stage stage, BitmapFont font) {
-
-		renderCenter(text, stage, font, 0.5f );
-
-	}
-
-
 	public static void renderCenter(String text, Stage stage, BitmapFont font, float y) {
 
 		Table table = new Table();
@@ -42,6 +37,6 @@ public class GameUtils {
 		table.add(label).expand().center().padTop(stage.getHeight() * y);
 
 		stage.addActor(table);
-	}*/
+	}
 
 }

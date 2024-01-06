@@ -2,11 +2,13 @@ package com.gamexisg.multijugadorconframework.states;
 
 import Actors.BaseActor;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.gamexisg.multijugadorconframework.network.OClient;
 import com.gamexisg.multijugadorconframework.network.messages.*;
 import com.gamexisg.multijugadorconframework.shooter.CuadritosMoqueteros;
@@ -14,7 +16,6 @@ import com.gamexisg.multijugadorconframework.shooter.OMessageListener;
 import com.gamexisg.multijugadorconframework.shooter.charactergroup.EnemyActor;
 import com.gamexisg.multijugadorconframework.shooter.charactergroup.MainBaseActor;
 import com.gamexisg.multijugadorconframework.shooter.input.PlayStateInput;
-import com.gamexisg.multijugadorconframework.shooter.shapes.AimLine;
 import com.gamexisg.multijugadorconframework.shooter.shapes.Bullet;
 import com.gamexisg.multijugadorconframework.shooter.shapes.Enemy;
 import com.gamexisg.multijugadorconframework.shooter.shapes.Player;
@@ -37,7 +38,7 @@ public class PlayState extends State implements OMessageListener {
 	private List<Player> players;
 	private List<Enemy> enemies;
 	private List<Bullet> bullets;
-	private AimLine aimLine;
+	private float angle = 90;
 
 	private OClient myclient;
 
@@ -60,8 +61,6 @@ public class PlayState extends State implements OMessageListener {
 		enemies = new ArrayList<>();
 		bullets = new ArrayList<>();
 
-		aimLine = new AimLine(new Vector2(0, 0), new Vector2(0, 0));
-		aimLine.setCamera(camera);
 
 		LoginMessage m = new LoginMessage();
 		m.setX(new SecureRandom().nextInt(GameConstants.SCREEN_WIDTH));
@@ -161,8 +160,7 @@ public class PlayState extends State implements OMessageListener {
 		}
 
 
-		/*aimLine.setBegin(player.getCenter());
-		aimLine.update(deltaTime);*/
+
 		processInputs();
 	}
 
@@ -179,13 +177,14 @@ public class PlayState extends State implements OMessageListener {
 	public void shoot() {
 		ShootMessage m = new ShootMessage();
 		m.setId(player.getId());
-		m.setAngleDeg(aimLine.getAngle());
+		m.setAngleDeg(angle);
 		myclient.sendUDP(m);
 	}
 
 	private void processInputs() {
 		PositionMessage positionMessage = new PositionMessage();
 		positionMessage.setId(player.getId());
+
 		if (Gdx.input.isKeyPressed(Keys.S)) {
 			positionMessage.setDirection(PositionMessage.DIRECTION.DOWN);
 			myclient.sendUDP(positionMessage);
@@ -202,7 +201,18 @@ public class PlayState extends State implements OMessageListener {
 			positionMessage.setDirection(PositionMessage.DIRECTION.RIGHT);
 			myclient.sendUDP(positionMessage);
 		}
+		if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
+			Vector3 up = camera.unproject(new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+			calculateAngle(player.getCenter(),new Vector2(up.x,up.y));
 
+		}
+
+	}
+	private void calculateAngle(Vector2 begin, Vector2 end) {
+
+		Vector2 pos = new Vector2(begin.x, begin.y);
+		Vector2 mouse = new Vector2(end.x, end.y);
+		angle = -mouse.sub(pos).angleRad();
 	}
 
 	@Override

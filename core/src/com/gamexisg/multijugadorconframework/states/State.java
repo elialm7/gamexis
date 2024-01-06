@@ -30,7 +30,7 @@ public abstract class State extends BaseScreen {
 	protected InputProcessor ip;
 
 
-	protected ShapeRenderer sr;
+	public static ShapeRenderer sr;
 	protected SpriteBatch sb;
 	protected BitmapFont bitmapFont;
 	protected GlyphLayout glyphLayout;
@@ -44,7 +44,9 @@ public abstract class State extends BaseScreen {
 		camera = new OrthographicCamera(GameConstants.SCREEN_WIDTH, GameConstants.SCREEN_HEIGHT);
 		camera.setToOrtho(true);
 
-		sr = new ShapeRenderer();
+		if(sr==null){
+			sr = new ShapeRenderer();
+		}
 		sb = new SpriteBatch();
 
 		sr.setProjectionMatrix(camera.combined);

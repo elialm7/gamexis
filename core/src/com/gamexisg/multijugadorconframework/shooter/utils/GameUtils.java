@@ -4,9 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+
 
 public class GameUtils {
 
@@ -25,22 +27,16 @@ public class GameUtils {
 		parameter.minFilter = TextureFilter.Linear;
 		return generator.generateFont(parameter);
 	}
+	public static void renderCenter(String text, Stage stage, BitmapFont font, float y) {
 
-	public static void renderCenter(String text, SpriteBatch sb, BitmapFont font) {
+		Table table = new Table();
+		table.setFillParent(true);
 
-		GlyphLayout gl = new GlyphLayout(font, text);
-		font.draw(sb, text, GameConstants.SCREEN_WIDTH / 2.0f - gl.width / 2.0f,
-				GameConstants.SCREEN_HEIGHT * 0.3f - gl.height / 2);
+		Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
+		Label label = new Label(text, labelStyle);
+		table.add(label).expand().center().padTop(stage.getHeight() * y);
 
-	}
-
-
-	public static void renderCenter(String text, SpriteBatch sb, BitmapFont font, float y) {
-
-		GlyphLayout gl = new GlyphLayout(font, text);
-		font.draw(sb, text, GameConstants.SCREEN_WIDTH / 2.0f - gl.width / 2.0f,
-				GameConstants.SCREEN_HEIGHT * y - gl.height / 2);
-
+		stage.addActor(table);
 	}
 
 }

@@ -13,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.compression.lzma.Base;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
@@ -22,6 +21,7 @@ import java.util.Arrays;
 
 public class BaseActor extends Group {
 
+    private int id = -1;
     private Animation animation;
     private float elapsedtime;
     private boolean animationPaused;
@@ -153,7 +153,13 @@ public class BaseActor extends Group {
     public void centerAtActor(BaseActor other){
         centerAtPosition(other.getX() + other.getWidth()/2, other.getY()+other.getHeight()/2);
     }
+    public int getId() {
+        return id;
+    }
 
+    public void setId(int id) {
+        this.id = id;
+    }
     public void setOpacity(float opacity){
         this.getColor().a = opacity;
     }
@@ -254,9 +260,9 @@ public class BaseActor extends Group {
             velocityVec.set(speed, 0);
         }else{
             /*
-            * primero normalizamos el vector ,
-            * es decir convertimos a su vector unitario,  y luego scalamos a la velocidad desea.
-            * */
+             * primero normalizamos el vector ,
+             * es decir convertimos a su vector unitario,  y luego scalamos a la velocidad desea.
+             * */
             velocityVec.nor().scl(speed);
         }
     }

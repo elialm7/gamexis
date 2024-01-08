@@ -11,6 +11,9 @@ public class Player {
 	private Rectangle boundRect;
 	private boolean alive;
 	private int health;
+	private boolean isAttacking = false;
+	private final float refreshTime = .5f;
+	private float currentRefreshTime = 0;
 
 	public Player(float x, float y, float size, int id) {
 		this.position = new Vector2(x, y);
@@ -23,9 +26,14 @@ public class Player {
 	}
 
 	public void update(float deltaTime) {
-
-		this.boundRect.x = position.x;
-		this.boundRect.y = position.y;
+		if(currentRefreshTime>0){
+			currentRefreshTime-=deltaTime;
+		}else if (isAttacking()){
+			setAttacking(false);
+		}else{
+			this.boundRect.x = position.x;
+			this.boundRect.y = position.y;
+		}
 		if (this.health <= 0) {
 			this.alive = false;
 		}
@@ -47,6 +55,11 @@ public class Player {
 		this.id = id;
 	}
 
+	public void setAttacking(boolean isAttacking) {
+		if(isAttacking) currentRefreshTime=refreshTime;
+		this.isAttacking = isAttacking;
+	}
+
 	public Rectangle getBoundRect() {
 		return boundRect;
 	}
@@ -57,6 +70,10 @@ public class Player {
 
 	public int getHealth() {
 		return this.health;
+	}
+
+	public boolean isAttacking() {
+		return isAttacking;
 	}
 
 	public void increaseHealth() {

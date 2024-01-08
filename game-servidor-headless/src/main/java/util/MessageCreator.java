@@ -27,13 +27,14 @@ public class MessageCreator {
 
         gwm.setEnemies(coordinates);
 
-        float[] pcord = new float[players.size() * 4];
+        float[] pcord = new float[players.size() * 5];
         for (int i = 0; i < players.size(); i++) {
 
             pcord[i * 4] = players.get(i).getPosition().x;
             pcord[i * 4 + 1] = players.get(i).getPosition().y;
             pcord[i * 4 + 2] = players.get(i).getId();
             pcord[i * 4 + 3] = players.get(i).getHealth();
+            pcord[i * 4 + 4] = players.get(i).isAttacking()?1f:0;
         }
 
         gwm.setPlayers(pcord);

@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.gamexisg.multijugadorconframework.network.OClient;
 import com.gamexisg.multijugadorconframework.network.messages.*;
 import com.gamexisg.multijugadorconframework.shooter.CuadritosMoqueteros;
@@ -91,9 +92,6 @@ public class PlayState extends State implements OMessageListener {
 		followPlayer();
 		sr.end();
 
-//		sb.begin();
-//		//GameUtils.renderCenter("Salud: " + player.getHealth(), sb, healthFont, 0.1f);
-//		sb.end();
 		mainStage.act(delta);
 		mainStage.draw();
 	}
@@ -124,14 +122,12 @@ public class PlayState extends State implements OMessageListener {
 		camera.update();
 		if (player == null)
 			return;
-//		if(archer.getX()!=player.getPosition().x || archer.getY() != player.getPosition().y)
-//			archer.setPosition(player.getPosition().x,player.getPosition().y);
-
 		players.forEach(p -> {
 			BaseActor.getList(mainStage, MainBaseActor.class).stream().filter(ba->ba.getId()==p.getId()).findFirst()
 					.ifPresentOrElse(baseActor ->{
-						baseActor.setPosition(p.getPosition().x,p.getPosition().y);
 						((MainBaseActor)baseActor).setHealth(p.getHealth());
+						baseActor.setPosition(p.getPosition().x,p.getPosition().y);
+						((MainBaseActor) baseActor).setAttacking(p.isAttacking());
 					}, ()->{
 						new MainBaseActor(p.getId(), p.getHealth(), p.getPosition().x,p.getPosition().y,mainStage);
 					});
@@ -144,7 +140,9 @@ public class PlayState extends State implements OMessageListener {
 			Enemy e = enemies.get(i);
 			ids[i]=e.getId();
 			BaseActor.getList(mainStage, EnemyActor.class).stream().filter(ea->ea.getId()==e.getId()).findFirst()
-					.ifPresentOrElse(baseActor -> baseActor.setPosition(e.getX(),e.getY())
+					.ifPresentOrElse(baseActor -> {
+								//baseActor.setPosition(e.getX(),e.getY());
+							}
 							, ()-> new EnemyActor(e.getId(),e.getX(),e.getY(),mainStage));
 		}
 		int baseActorEnemySize = BaseActor.getList(mainStage,EnemyActor.class).size();
@@ -184,7 +182,6 @@ public class PlayState extends State implements OMessageListener {
 	private void processInputs() {
 		PositionMessage positionMessage = new PositionMessage();
 		positionMessage.setId(player.getId());
-
 		if (Gdx.input.isKeyPressed(Keys.S)) {
 			positionMessage.setDirection(PositionMessage.DIRECTION.DOWN);
 			myclient.sendUDP(positionMessage);
@@ -230,8 +227,12 @@ public class PlayState extends State implements OMessageListener {
 
 	@Override
 	public void playerDiedReceived(PlayerDied m) {
-		if (player.getId() != m.getId())
+		if (player.getId() != m.getId()) {
+			BaseActor.getList(mainStage, MainBaseActor.class).stream().filter(p->p.getId()==m.getId())
+							.findFirst().ifPresent(Actor::remove);
+			players.removeIf(p -> p.getId() == m.getId());
 			return;
+		}
 		LogoutMessage mm = new LogoutMessage();
 		mm.setId(player.getId());
 		myclient.sendTCP(mm);
@@ -260,8 +261,13 @@ public class PlayState extends State implements OMessageListener {
 
 	@Override
 	public void dispose() {
+        bullets.clear();
+		players.clear();
+		enemies.clear();
 		LogoutMessage m = new LogoutMessage();
 		m.setId(player.getId());
 		myclient.sendTCP(m);
+		mainStage.dispose();
+		uiStage.dispose();
 	}
 }

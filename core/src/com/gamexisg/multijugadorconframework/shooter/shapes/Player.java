@@ -13,6 +13,7 @@ public class Player {
 	private Vector2 position;
 	private int id = -1;
 	private int health;
+	private boolean isAttacking = false;
 
 	private Vector2 center;
 
@@ -23,7 +24,14 @@ public class Player {
 		center = new Vector2(x, y);
 	}
 
-	/*public void render(ShapeRenderer sr) {
+	public boolean isAttacking() {
+		return isAttacking;
+	}
+
+	public void setAttacking(boolean attacking) {
+		isAttacking = attacking;
+	}
+/*public void render(ShapeRenderer sr) {
 		sr.rect(position.x, position.y, size, size);
 		sr.end();
 		sr.begin(ShapeType.Filled);

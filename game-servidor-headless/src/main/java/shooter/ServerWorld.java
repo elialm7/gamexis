@@ -144,25 +144,24 @@ public class ServerWorld implements OMessageListener {
 
 	@Override
 	public void playerMovedReceived(PositionMessage move) {
-
-		players.stream().filter(p -> p.getId() == move.getId()).findFirst().ifPresent(p -> {
-			int d = 200;
+		int d = 200;
+		players.stream().filter(p -> p.getId() == move.getId() && !p.isAttacking()).findFirst().ifPresent(p -> {
 			Vector2 v = p.getPosition();
 			switch (move.getDirection()) {
-			case LEFT:
-				v.x -= deltaTime * d;
-				break;
-			case RIGHT:
-				v.x += deltaTime * d;
-				break;
-			case UP:
-				v.y -= deltaTime * d;
-				break;
-			case DOWN:
-				v.y += deltaTime * d;
-				break;
-			default:
-				break;
+			    case LEFT:
+				    v.x -= deltaTime * d;
+                    break;
+			    case RIGHT:
+				    v.x += deltaTime * d;
+                    break;
+			    case UP:
+				    v.y -= deltaTime * d;
+                    break;
+			    case DOWN:
+				    v.y += deltaTime * d;
+                    break;
+			    default:
+				    break;
 			}
 
 		});
@@ -172,9 +171,12 @@ public class ServerWorld implements OMessageListener {
 	@Override
 	public void shootMessageReceived(ShootMessage pp) {
 
-		players.stream().filter(p -> p.getId() == pp.getId()).findFirst()
-				.ifPresent(p -> bullets.add(new Bullet(p.getPosition().x + p.getBoundRect().width / 2,
-						p.getPosition().y + p.getBoundRect().height / 2, 10, pp.getAngleDeg(), pp.getId())));
+		players.stream().filter(p -> p.getId() == pp.getId() && !p.isAttacking()).findFirst()
+				.ifPresent(p ->{
+                    p.setAttacking(!p.isAttacking());
+                    bullets.add(new Bullet(p.getPosition().x + p.getBoundRect().width / 2,
+                            p.getPosition().y + p.getBoundRect().height / 2, 10, pp.getAngleDeg(), pp.getId()));
+                });
 
 	}
 

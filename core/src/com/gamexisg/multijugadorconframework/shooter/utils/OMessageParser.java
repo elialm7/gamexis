@@ -36,7 +36,7 @@ public class OMessageParser {
 	public static void getPlayersFromGWM(GameWorldMessage m, List<Player> players) {
 
 		float[] tp = m.getPlayers();
-		int dim = tp.length/4;
+		int dim = tp.length/5;
 		int[] ids = new int[dim];
 		for (int i = 0; i <  dim; i++) {
 
@@ -44,11 +44,13 @@ public class OMessageParser {
 			float y = tp[i * 4 + 1];
 			int id = (int) tp[i * 4 + 2];
 			int health = (int) tp[i * 4 + 3];
+			boolean isAttacking =  tp[i * 4 + 4]>0;
 			ids[i] = id;
 			players.stream().filter(player -> player.getId()==id).findFirst()
 					.ifPresentOrElse(player -> {
 						player.setPosition(new Vector2(x,y));
 						player.setHealth(health);
+						player.setAttacking(isAttacking);
 					},() -> {
 						Player p = new Player(x,y,50);
 						p.setId(id);
@@ -56,6 +58,7 @@ public class OMessageParser {
 						players.add(p);
 					} );
 		}
+		players.removeIf(player -> !ContainsId.evalue(ids, player.getId()));
 	}
 
 

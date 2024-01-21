@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.gamexisg.multijugadorconframework.shooter.character.Archer;
 import com.gamexisg.multijugadorconframework.shooter.character.Square;
+import com.gamexisg.multijugadorconframework.shooter.character.TypeAnimation;
 import com.gamexisg.multijugadorconframework.shooter.utils.GameUtils;
 
 public class MainBaseActor extends BaseActor {
@@ -14,7 +15,6 @@ public class MainBaseActor extends BaseActor {
     private final Archer archer;
     private final Square square;
     private final Label floatingText;
-    private boolean isAttacking = false;
     public MainBaseActor(int id, int health, float x, float y, Stage s) {
         super(x,y,s);
         setSize(80,80);
@@ -39,8 +39,7 @@ public class MainBaseActor extends BaseActor {
 
 
     public void setAttacking(boolean attacking) {
-        if(attacking) archer.setCurrentType(Archer.TypeAnimation.ATTACK);
-        isAttacking = attacking;
+        if(attacking) archer.setCurrentType(TypeAnimation.ATTACK);
     }
 
     @Override
@@ -48,7 +47,7 @@ public class MainBaseActor extends BaseActor {
 
         if(archer !=null){
             if(x!=getX() || y !=getY())
-                archer.setCurrentType(Archer.TypeAnimation.RUN);
+                archer.setCurrentType(TypeAnimation.RUN);
             if(x<getX() && archer.getScaleX()<0){
                 archer.setScaleX(-archer.getScaleX());
             }else if (x>getX() && archer.getScaleX()>0){

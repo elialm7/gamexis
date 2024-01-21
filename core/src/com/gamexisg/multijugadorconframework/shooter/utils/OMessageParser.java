@@ -62,21 +62,23 @@ public class OMessageParser {
 	}
 
 
-	public static List<Bullet> getBulletsFromGWM(GameWorldMessage m) {
+	public static List<Bullet> getBulletsFromGWM(GameWorldMessage m, List<Bullet> blist ) {
 
 		float[] tb = m.getBullets();
-
-		List<Bullet> blist = new ArrayList<>();
-		for (int i = 0; i < tb.length / 3; i++) {
+		int dim = tb.length / 4;
+		int[] ids = new int[dim];
+		for (int i = 0; i < dim; i++) {
 			float x = tb[i * 3];
 			float y = tb[i * 3 + 1];
 			float size = tb[i * 3 + 2];
+			int id = (int) tb[i * 3 + 3];
+			ids[i] = id;
 
-			Bullet b = new Bullet(x, y, size);
-
-			blist.add(b);
+			blist.stream().filter(bullet -> bullet.getId()==id).findFirst()
+					.ifPresentOrElse(bullet -> bullet.setPosition(new Vector2(x,y))
+					,()-> blist.add(new Bullet(id, x, y, size)));
 		}
-
+		blist.removeIf(bullet -> !ContainsId.evalue(ids, bullet.getId()));
 		return blist;
 	}
 

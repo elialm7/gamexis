@@ -39,11 +39,13 @@ public class MessageCreator {
 
         gwm.setPlayers(pcord);
 
-        float[] barray = new float[bullets.size() * 3];
+        float[] barray = new float[bullets.size() * 4];
         for (int i = 0; i < bullets.size(); i++) {
             barray[i * 3] = bullets.get(i).getPosition().x;
             barray[i * 3 + 1] = bullets.get(i).getPosition().y;
             barray[i * 3 + 2] = bullets.get(i).getSize();
+            barray[i * 3 + 2] = bullets.get(i).getId();
+
         }
         gwm.setBullets(barray);
 

@@ -49,9 +49,7 @@ public class StateController {
 			case MENU_STATE:
 				currentState = new MenuState(this);
 				break;
-
 			default:
-				currentState = new MenuState(this);
 				break;
 			}
 			stateMap.put(stateEnum.ordinal(), currentState);

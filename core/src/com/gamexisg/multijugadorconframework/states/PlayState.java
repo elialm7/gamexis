@@ -1,6 +1,7 @@
 package com.gamexisg.multijugadorconframework.states;
 
 import Actors.BaseActor;
+import Actors.SimpleActor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
@@ -14,6 +15,7 @@ import com.gamexisg.multijugadorconframework.network.OClient;
 import com.gamexisg.multijugadorconframework.network.messages.*;
 import com.gamexisg.multijugadorconframework.shooter.CuadritosMoqueteros;
 import com.gamexisg.multijugadorconframework.shooter.OMessageListener;
+import com.gamexisg.multijugadorconframework.shooter.character.Arrow;
 import com.gamexisg.multijugadorconframework.shooter.charactergroup.EnemyActor;
 import com.gamexisg.multijugadorconframework.shooter.charactergroup.MainBaseActor;
 import com.gamexisg.multijugadorconframework.shooter.input.PlayStateInput;
@@ -50,7 +52,6 @@ public class PlayState extends State implements OMessageListener {
 		camera.setToOrtho(true);
 		init();
 		ip = new PlayStateInput(this);
-		//healthFont = GameUtils.generateBitmapFont(20, Color.WHITE);
 	}
 
 	private void init() {
@@ -132,9 +133,14 @@ public class PlayState extends State implements OMessageListener {
 						new MainBaseActor(p.getId(), p.getHealth(), p.getPosition().x,p.getPosition().y,mainStage);
 					});
 		});
-		BaseActor.getList(mainStage, Enemy.class).forEach(baseActor -> {
 
-		});
+		createAndDropEnemies();
+		createAndDropBullets();
+
+		processInputs();
+	}
+
+	private void createAndDropEnemies () {
 		int []ids = new int[enemies.size()];
 		for(int i=0;i< enemies.size();i++){
 			Enemy e = enemies.get(i);
@@ -146,9 +152,9 @@ public class PlayState extends State implements OMessageListener {
 							, ()-> new EnemyActor(e.getId(),e.getX(),e.getY(),mainStage));
 		}
 		int baseActorEnemySize = BaseActor.getList(mainStage,EnemyActor.class).size();
-		if(enemies.size()!=baseActorEnemySize){
+		if (enemies.size()!=baseActorEnemySize){
 			CuadritosMoqueteros.logger.debug("Actualizando, debe de haber "
-			+enemies.size()+" pero hay "+baseActorEnemySize+" pelotitas.");
+					+enemies.size()+" pero hay "+baseActorEnemySize+" pelotitas.");
 			BaseActor.getList(mainStage, EnemyActor.class).forEach(e->{
 				if(!ContainsId.evalue(ids,e.getId())){
 					BaseActor.getList(mainStage, EnemyActor.class).remove(e);
@@ -156,12 +162,29 @@ public class PlayState extends State implements OMessageListener {
 				}
 			});
 		}
-
-
-
-		processInputs();
 	}
 
+	private void createAndDropBullets () {
+		int []ids = new int[bullets.size()];
+		for(int i=0; i<bullets.size();i++){
+			Bullet b = bullets.get(i);
+			ids[i]= b.getId();
+			SimpleActor.getList(mainStage, Arrow.class).stream().filter(
+					arrow-> ((Arrow)arrow).getBullet().getId()== b.getId()
+			).findFirst().ifPresentOrElse(simpleActor -> {},
+					() -> new Arrow(b,mainStage));
+		}
+
+		int arrowsSize = SimpleActor.getList(mainStage, Arrow.class).size();
+		if (bullets.size() != arrowsSize){
+			SimpleActor.getList(mainStage, Arrow.class).forEach(b->{
+				if(!ContainsId.evalue(ids,((Arrow)b).getBullet().getId())){
+					SimpleActor.getList(mainStage, Arrow.class).remove(b);
+					b.remove();
+				}
+			});
+		}
+	}
 	public void scrolled(float amountY) {
 		if (amountY > 0) {
 			camera.zoom += 0.2F;
@@ -244,7 +267,7 @@ public class PlayState extends State implements OMessageListener {
 	public void gwmReceived(GameWorldMessage m) {
 
 		OMessageParser.getEnemiesFromGWM(m, enemies);
-		bullets = OMessageParser.getBulletsFromGWM(m);
+		OMessageParser.getBulletsFromGWM(m, bullets);
 		OMessageParser.getPlayersFromGWM(m,players);
 
 		if (player == null)
@@ -255,18 +278,29 @@ public class PlayState extends State implements OMessageListener {
 
 	}
 
+	@Override
+	public void hide() {
+		deleteData();
+	}
+
+	private void deleteData (){
+		bullets.clear();
+		players.clear();
+		enemies.clear();
+		mainStage.getActors().clear();
+		uiStage.getActors().clear();
+	}
+
 	public void restart() {
 		init();
 	}
 
 	@Override
 	public void dispose() {
-        bullets.clear();
-		players.clear();
-		enemies.clear();
 		LogoutMessage m = new LogoutMessage();
 		m.setId(player.getId());
 		myclient.sendTCP(m);
+		deleteData();
 		mainStage.dispose();
 		uiStage.dispose();
 	}

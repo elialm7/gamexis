@@ -13,8 +13,9 @@ public class Player {
 	private Vector2 position;
 	private int id = -1;
 	private int health;
+	private boolean isAttacking = false;
 
-	private final Vector2 center;
+	private Vector2 center;
 
 	public Player(float x, float y, float size) {
 		this.position = new Vector2(x, y);
@@ -23,7 +24,14 @@ public class Player {
 		center = new Vector2(x, y);
 	}
 
-	public void render(ShapeRenderer sr) {
+	public boolean isAttacking() {
+		return isAttacking;
+	}
+
+	public void setAttacking(boolean attacking) {
+		isAttacking = attacking;
+	}
+/*public void render(ShapeRenderer sr) {
 		sr.rect(position.x, position.y, size, size);
 		sr.end();
 		sr.begin(ShapeType.Filled);
@@ -32,10 +40,11 @@ public class Player {
 		sr.begin(ShapeType.Line);
 		center.x = position.x + size / 2;
 		center.y = position.y + size / 2;
-	}
+	}*/
 
 	public void setPosition(Vector2 position) {
 		this.position = position;
+		this.center = new Vector2(position.x+size/2,position.y+size/2);
 	}
 
 	public Vector2 getCenter() {

@@ -3,6 +3,7 @@ package com.gamexisg.multijugadorconframework.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.gamexisg.multijugadorconframework.shooter.input.GameOverInput;
 import com.gamexisg.multijugadorconframework.shooter.utils.GameUtils;
@@ -16,12 +17,11 @@ import com.gamexisg.multijugadorconframework.shooter.utils.GameUtils;
  */
 public class GameOverState extends State {
 
-	private BitmapFont smallFont;
-
-	public GameOverState(StateController sc) {
+    public GameOverState(StateController sc) {
 		super(sc);
 		ip = new GameOverInput(this);
-		smallFont = GameUtils.generateBitmapFont(32, Color.WHITE);
+		camera = (OrthographicCamera) mainStage.getCamera();
+		camera.setToOrtho(true);
 
 	}
 
@@ -33,10 +33,10 @@ public class GameOverState extends State {
 		Gdx.gl.glClearColor(red / 255f, green / 255f, blue / 255f, 0.5f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		sb.begin();
-		GameUtils.renderCenter("Perdeu", sb, bitmapFont);
-		GameUtils.renderCenter("Presionar R para reiniciar.", sb, smallFont, 0.6f);
-		sb.end();
+		//sb.begin();
+		mainStage.act(delta);
+		mainStage.draw();
+		//sb.end();
 	}
 
 	@Override
@@ -51,7 +51,9 @@ public class GameOverState extends State {
 
 	@Override
 	public void initialize() {
-
+		BitmapFont smallFont = GameUtils.generateBitmapFont(25, Color.WHITE);
+		GameUtils.renderCenter("Perdeu", mainStage, smallFont, 0.3f);
+		GameUtils.renderCenter("Presionar R para reiniciar", mainStage, smallFont, 0.2f);
 	}
 
 	@Override

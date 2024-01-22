@@ -1,5 +1,6 @@
 package com.gamexisg.multijugadorconframework.shooter.utils;
 
+import com.badlogic.gdx.math.Vector2;
 import com.gamexisg.multijugadorconframework.network.messages.GameWorldMessage;
 import com.gamexisg.multijugadorconframework.shooter.shapes.Bullet;
 import com.gamexisg.multijugadorconframework.shooter.shapes.Enemy;
@@ -18,62 +19,66 @@ public class OMessageParser {
 
 		float[] temp = m.getEnemies();
 		int dim = temp.length/3;
-		int ids[] = new int[dim];
+		int[] ids = new int[dim];
 		for (int i = 0; i < dim; i++) {
 			float x = temp[i * 3];
 			float y = temp[i * 3 + 1];
 			int id = (int) temp[i * 3 + 2];
 			ids[i] = id;
-			Enemy e = new Enemy(id, x, y, 10);
-			enemies.add(e);
+			enemies.stream().filter(enemy -> enemy.getId()==id).findFirst().ifPresentOrElse(
+					e->{},
+					()->enemies.add(new Enemy(id,x,y))
+			);
 		}
-		enemies.removeIf(enemy -> !containsId(ids, enemy.getId()));
+		enemies.removeIf(enemy -> !ContainsId.evalue(ids, enemy.getId()));
 	}
-	private static boolean containsId(int[] ids, int id) {
-		for (int validId : ids) {
-			if (validId == id) {
-				return true;
-			}
-		}
-		return false;
-	}
-	public static List<Player> getPlayersFromGWM(GameWorldMessage m) {
+
+	public static void getPlayersFromGWM(GameWorldMessage m, List<Player> players) {
 
 		float[] tp = m.getPlayers();
-		List<Player> plist = new ArrayList<>();
-		for (int i = 0; i < tp.length / 4; i++) {
+		int dim = tp.length/5;
+		int[] ids = new int[dim];
+		for (int i = 0; i <  dim; i++) {
 
 			float x = tp[i * 4];
 			float y = tp[i * 4 + 1];
-			float id = tp[i * 4 + 2];
-			float health = tp[i * 4 + 3];
-			Player p = new Player(x, y, 50);
-			p.setHealth((int) health);
-			p.setId((int) id);
-
-			plist.add(p);
-
+			int id = (int) tp[i * 4 + 2];
+			int health = (int) tp[i * 4 + 3];
+			boolean isAttacking =  tp[i * 4 + 4]>0;
+			ids[i] = id;
+			players.stream().filter(player -> player.getId()==id).findFirst()
+					.ifPresentOrElse(player -> {
+						player.setPosition(new Vector2(x,y));
+						player.setHealth(health);
+						player.setAttacking(isAttacking);
+					},() -> {
+						Player p = new Player(x,y,50);
+						p.setId(id);
+						p.setHealth(health);
+						players.add(p);
+					} );
 		}
-		return plist;
-
+		players.removeIf(player -> !ContainsId.evalue(ids, player.getId()));
 	}
 
 
-	public static List<Bullet> getBulletsFromGWM(GameWorldMessage m) {
+	public static List<Bullet> getBulletsFromGWM(GameWorldMessage m, List<Bullet> blist ) {
 
 		float[] tb = m.getBullets();
-
-		List<Bullet> blist = new ArrayList<>();
-		for (int i = 0; i < tb.length / 3; i++) {
+		int dim = tb.length / 4;
+		int[] ids = new int[dim];
+		for (int i = 0; i < dim; i++) {
 			float x = tb[i * 3];
 			float y = tb[i * 3 + 1];
 			float size = tb[i * 3 + 2];
+			int id = (int) tb[i * 3 + 3];
+			ids[i] = id;
 
-			Bullet b = new Bullet(x, y, size);
-
-			blist.add(b);
+			blist.stream().filter(bullet -> bullet.getId()==id).findFirst()
+					.ifPresentOrElse(bullet -> bullet.setPosition(new Vector2(x,y))
+					,()-> blist.add(new Bullet(id, x, y, size)));
 		}
-
+		blist.removeIf(bullet -> !ContainsId.evalue(ids, bullet.getId()));
 		return blist;
 	}
 
